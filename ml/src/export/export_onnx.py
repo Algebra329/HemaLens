@@ -155,6 +155,10 @@ if __name__ == "__main__":
     write_model_io_doc(seg_info, cls_info, args.model_io_doc)
 
     Path(args.web_models_dir).mkdir(parents=True, exist_ok=True)
-    shutil.copy(seg_onnx_path, args.web_models_dir)
-    shutil.copy(cls_onnx_path, args.web_models_dir)
-    print(f"Copied both .onnx files to {args.web_models_dir}")
+    for onnx_path in (seg_onnx_path, cls_onnx_path):
+        dest = Path(args.web_models_dir) / Path(onnx_path).name
+        if Path(onnx_path).resolve() == dest.resolve():
+            print(f"{onnx_path} already at destination, skipping copy")
+        else:
+            shutil.copy(onnx_path, dest)
+    print(f"ONNX files ready in {args.web_models_dir}")
