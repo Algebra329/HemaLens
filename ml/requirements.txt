@@ -2,6 +2,7 @@ torch
 torchvision
 monai
 onnx
+onnxscript
 onnxruntime
 efficientnet-pytorch
 numpy

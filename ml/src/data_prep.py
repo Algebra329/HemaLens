@@ -42,9 +42,10 @@ CLASS_NAMES = {
     12: "Elliptocyte",
 }
 
-# Pseudo-mask circle radius in pixels. Tune against the actual image scale
-# once you have real images in hand -- RBCs at this magnification/resolution
-# are roughly this order of size, but verify rather than trust this constant.
+# Pseudo-mask circle radius in pixels. Visually confirmed against real
+# Chula-RBC-12 images (640x480, 1000x magnification): radius=12 tracks
+# actual cell boundaries well; radius=20 overlaps neighboring cells. If you
+# resize input images before training, rescale this proportionally.
 MASK_RADIUS_PX = 12
 
 # Crop size (square, pixels) for classification patches, centered on each point.
