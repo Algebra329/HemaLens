@@ -195,6 +195,7 @@ def report_class_distribution(annotations: dict, out_csv: str = None):
         print(f"Imbalance ratio (majority:minority): {majority / minority:.1f}:1")
 
     if out_csv:
+        Path(out_csv).parent.mkdir(parents=True, exist_ok=True)
         with open(out_csv, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["class", "count", "pct"])
