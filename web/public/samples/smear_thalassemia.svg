@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <radialGradient id="plasmaBg2" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#fdf4f5" />
+      <stop offset="60%" stop-color="#faeaed" />
+      <stop offset="100%" stop-color="#f3dce0" />
+    </radialGradient>
+    
+    <!-- Hypochromic RBC (thin rim of hemoglobin, wide center) -->
+    <radialGradient id="hypoRbc" cx="38%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#fdf2f4" />
+      <stop offset="55%" stop-color="#f5b8c0" />
+      <stop offset="85%" stop-color="#db5569" />
+      <stop offset="100%" stop-color="#be2e44" />
+    </radialGradient>
+
+    <!-- Normal RBC -->
+    <radialGradient id="normalRbc2" cx="38%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#fce7ea" />
+      <stop offset="35%" stop-color="#f29ba6" />
+      <stop offset="75%" stop-color="#df4e63" />
+      <stop offset="100%" stop-color="#b62a40" />
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#plasmaBg2)" />
+
+  <!-- Normal RBCs -->
+  <circle cx="100" cy="110" r="30" fill="url(#normalRbc2)" />
+  <circle cx="100" cy="110" r="11" fill="#fce7ea" />
+
+  <circle cx="210" cy="90" r="28" fill="url(#normalRbc2)" />
+  <circle cx="210" cy="90" r="10" fill="#fce7ea" />
+
+  <circle cx="560" cy="120" r="30" fill="url(#normalRbc2)" />
+  <circle cx="560" cy="120" r="12" fill="#fce7ea" />
+
+  <!-- TARGET CELLS (Bullseye: outer ring, pale clear zone, central red hemoglobin dot) -->
+  <!-- Target Cell 1 -->
+  <circle cx="270" cy="170" r="32" fill="#d9435b" />
+  <circle cx="270" cy="170" r="22" fill="#fdf0f2" />
+  <circle cx="270" cy="170" r="9" fill="#c02f46" />
+
+  <!-- Target Cell 2 -->
+  <circle cx="430" cy="220" r="34" fill="#d9435b" />
+  <circle cx="430" cy="220" r="24" fill="#fdf0f2" />
+  <circle cx="430" cy="220" r="10" fill="#c02f46" />
+
+  <!-- Target Cell 3 -->
+  <circle cx="610" cy="280" r="33" fill="#d9435b" />
+  <circle cx="610" cy="280" r="23" fill="#fdf0f2" />
+  <circle cx="610" cy="280" r="9" fill="#c02f46" />
+
+  <!-- Target Cell 4 -->
+  <circle cx="340" cy="410" r="32" fill="#d9435b" />
+  <circle cx="340" cy="410" r="22" fill="#fdf0f2" />
+  <circle cx="340" cy="410" r="9" fill="#c02f46" />
+
+  <!-- Target Cell 5 -->
+  <circle cx="510" cy="460" r="31" fill="#d9435b" />
+  <circle cx="510" cy="460" r="21" fill="#fdf0f2" />
+  <circle cx="510" cy="460" r="8" fill="#c02f46" />
+
+  <!-- MICROCYTES (Abnormally small RBCs, radius ~20-22px) -->
+  <circle cx="150" cy="210" r="21" fill="url(#normalRbc2)" />
+  <circle cx="150" cy="210" r="7" fill="#fce7ea" />
+
+  <circle cx="370" cy="130" r="20" fill="url(#normalRbc2)" />
+  <circle cx="370" cy="130" r="6" fill="#fce7ea" />
+
+  <circle cx="490" cy="150" r="21" fill="url(#normalRbc2)" />
+  <circle cx="490" cy="150" r="7" fill="#fce7ea" />
+
+  <circle cx="200" cy="320" r="20" fill="url(#normalRbc2)" />
+  <circle cx="200" cy="320" r="6" fill="#fce7ea" />
+
+  <circle cx="680" cy="190" r="22" fill="url(#normalRbc2)" />
+  <circle cx="680" cy="190" r="7" fill="#fce7ea" />
+
+  <!-- HYPOCHROMIA (Marked pallor > 60% of cell diameter) -->
+  <circle cx="110" cy="370" r="33" fill="url(#hypoRbc)" />
+  <circle cx="110" cy="370" r="22" fill="#fef6f7" />
+
+  <circle cx="260" cy="280" r="32" fill="url(#hypoRbc)" />
+  <circle cx="260" cy="280" r="20" fill="#fef6f7" />
+
+  <circle cx="470" cy="340" r="34" fill="url(#hypoRbc)" />
+  <circle cx="470" cy="340" r="23" fill="#fef6f7" />
+
+  <circle cx="630" cy="420" r="33" fill="url(#hypoRbc)" />
+  <circle cx="630" cy="420" r="21" fill="#fef6f7" />
+
+  <!-- TEARDROP CELLS / DACRYOCYTES -->
+  <path d="M 330 250 C 330 230, 360 215, 375 240 C 385 255, 380 280, 360 285 C 340 290, 325 275, 330 250 Z" fill="url(#normalRbc2)" />
+  <path d="M 180 440 C 180 420, 210 410, 220 430 C 230 445, 220 465, 205 470 C 190 475, 175 460, 180 440 Z" fill="url(#normalRbc2)" />
+</svg>

@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- Slide background texture -->
+    <radialGradient id="plasmaBg" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#fdf4f5" />
+      <stop offset="60%" stop-color="#faeaed" />
+      <stop offset="100%" stop-color="#f3dce0" />
+    </radialGradient>
+    
+    <!-- Normal Discocyte gradient (biconcave disc with pale center) -->
+    <radialGradient id="normalRbc" cx="38%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#fce7ea" />
+      <stop offset="35%" stop-color="#f29ba6" />
+      <stop offset="75%" stop-color="#df4e63" />
+      <stop offset="100%" stop-color="#b62a40" />
+    </radialGradient>
+
+    <!-- Platelet -->
+    <radialGradient id="platelet" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#6b21a8" />
+    </radialGradient>
+  </defs>
+
+  <!-- Slide Field of View -->
+  <rect width="800" height="600" fill="url(#plasmaBg)" />
+
+  <!-- Normal Red Blood Cells (Discocytes with central pallor) -->
+  <!-- Top Left Cluster -->
+  <circle cx="110" cy="120" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="110" cy="120" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="180" cy="95" r="33" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="180" cy="95" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="85" cy="200" r="30" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="85" cy="200" r="12" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="160" cy="180" r="34" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="160" cy="180" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="235" cy="140" r="31" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="235" cy="140" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <!-- Center Field -->
+  <circle cx="310" cy="190" r="33" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="310" cy="190" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="270" cy="265" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="270" cy="265" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="370" cy="250" r="35" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="370" cy="250" r="15" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="340" cy="330" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="340" cy="330" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="430" cy="180" r="31" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="430" cy="180" r="12" fill="#fce7ea" opacity="0.85" />
+
+  <!-- Right / Top Field -->
+  <circle cx="510" cy="130" r="33" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="510" cy="130" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="585" cy="175" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="585" cy="175" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="475" cy="260" r="34" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="475" cy="260" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="660" cy="130" r="31" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="660" cy="130" r="12" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="560" cy="270" r="33" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="560" cy="270" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <!-- Bottom Field -->
+  <circle cx="140" cy="310" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="140" cy="310" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="210" cy="360" r="34" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="210" cy="360" r="15" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="120" cy="420" r="33" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="120" cy="420" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="240" cy="450" r="31" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="240" cy="450" r="12" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="330" cy="420" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="330" cy="420" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="420" cy="370" r="33" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="420" cy="370" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="500" cy="390" r="34" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="500" cy="390" r="15" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="610" cy="360" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="610" cy="360" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="410" cy="480" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="410" cy="480" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="520" cy="490" r="33" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="520" cy="490" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="630" cy="460" r="31" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="630" cy="460" r="12" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="700" cy="240" r="32" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="700" cy="240" r="13" fill="#fce7ea" opacity="0.85" />
+
+  <circle cx="710" cy="370" r="33" fill="url(#normalRbc)" opacity="0.95" />
+  <circle cx="710" cy="370" r="14" fill="#fce7ea" opacity="0.85" />
+
+  <!-- Tiny Platelets -->
+  <circle cx="280" cy="115" r="5" fill="url(#platelet)" opacity="0.8" />
+  <circle cx="480" cy="330" r="6" fill="url(#platelet)" opacity="0.85" />
+  <circle cx="360" cy="470" r="5" fill="url(#platelet)" opacity="0.8" />
+</svg>
