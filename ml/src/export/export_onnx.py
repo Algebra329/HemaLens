@@ -45,6 +45,10 @@ def export_segmentation_model(checkpoint_path: str, out_path: str):
         input_names=["image"], output_names=["mask_logits"],
         dynamic_axes={"image": {0: "batch"}, "mask_logits": {0: "batch"}},
         opset_version=18,
+        dynamo=False,  # avoids unrequested external-data (.onnx.data) files --
+                        # onnxruntime-web can't auto-resolve those in-browser,
+                        # and our models are far under the 2GB limit that
+                        # would actually require external data.
     )
 
     _verify_onnx(out_path, dummy_input, model, output_key="mask_logits")
@@ -70,6 +74,7 @@ def export_classification_model(checkpoint_path: str, out_path: str):
         input_names=["cell_crop"], output_names=["class_logits"],
         dynamic_axes={"cell_crop": {0: "batch"}, "class_logits": {0: "batch"}},
         opset_version=18,
+        dynamo=False,  # see comment in export_segmentation_model
     )
 
     _verify_onnx(out_path, dummy_input, model, output_key="class_logits")
@@ -171,9 +176,22 @@ if __name__ == "__main__":
 
     Path(args.web_models_dir).mkdir(parents=True, exist_ok=True)
     for onnx_path in (seg_onnx_path, cls_onnx_path):
-        dest = Path(args.web_models_dir) / Path(onnx_path).name
-        if Path(onnx_path).resolve() == dest.resolve():
-            print(f"{onnx_path} already at destination, skipping copy")
-        else:
-            shutil.copy(onnx_path, dest)
+        # torch's exporter may write weights to a companion "<name>.onnx.data"
+        # file alongside the .onnx graph itself (seen even for models well
+        # under any classic 2GB protobuf limit -- the newer dynamo-based
+        # exporter does this by default). Both files must travel together:
+        # the .onnx references the .data file by relative filename, so as
+        # long as they stay in the same folder it's portable, but forgetting
+        # to copy the .data file leaves a graph with no weights.
+        candidates = [Path(onnx_path)]
+        data_file = Path(onnx_path).with_suffix(Path(onnx_path).suffix + ".data")
+        if data_file.exists():
+            candidates.append(data_file)
+
+        for src in candidates:
+            dest = Path(args.web_models_dir) / src.name
+            if src.resolve() == dest.resolve():
+                print(f"{src} already at destination, skipping copy")
+            else:
+                shutil.copy(src, dest)
     print(f"ONNX files ready in {args.web_models_dir}")

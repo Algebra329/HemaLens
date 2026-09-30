@@ -3,7 +3,6 @@ venv/
 __pycache__/
 *.pyc
 .vscode/
-
 # ML data & checkpoints (too large for git)
 ml/data/raw/
 ml/data/processed/
