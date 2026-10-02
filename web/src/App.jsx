@@ -104,15 +104,14 @@ export default function App() {
   };
 
   const handleScanComplete = async () => {
-    setIsScanning(false);
-    setScanDone(true);
-
     // If real ONNX models are available, run through onnxruntime-web
     if (isRealOnnxActive && hiddenImgRef.current) {
       try {
         const onnxDetections = await runInferencePipeline(hiddenImgRef.current);
         if (onnxDetections && onnxDetections.length > 0) {
           setResults(onnxDetections);
+          setIsScanning(false);
+          setScanDone(true);
           return;
         }
       } catch (err) {
@@ -126,6 +125,8 @@ export default function App() {
     } else {
       setResults(PRESET_RESULTS.normal);
     }
+    setIsScanning(false);
+    setScanDone(true);
   };
 
   const handleReset = () => {
@@ -139,13 +140,13 @@ export default function App() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-primary)' }}>
-      {/* Hidden image element used for extracting tensors in ONNX inference */}
+      {/* Offscreen image element used for extracting tensors in ONNX inference */}
       {selectedImage && (
         <img
           ref={hiddenImgRef}
           src={selectedImage.src}
           alt="raw inference source"
-          style={{ display: 'none' }}
+          style={{ position: 'fixed', top: '-9999px', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
           crossOrigin="anonymous"
         />
       )}
