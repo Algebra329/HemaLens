@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Microscope, Cpu, Layers, CheckCircle2, Loader2 } from 'lucide-react';
+import { Microscope, Cpu, Layers, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 
-export default function ScanningLoader({ imageSrc, onScanComplete }) {
+export default function ScanningLoader({ imageSrc, expectedCount = 21, onScanComplete }) {
   const [progress, setProgress] = useState(0);
   const [stage, setStage] = useState(1); // 1 = Segmentation, 2 = Classification, 3 = Complete
   const [detectedCount, setDetectedCount] = useState(0);
@@ -11,10 +11,14 @@ export default function ScanningLoader({ imageSrc, onScanComplete }) {
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev < 48) {
-          return prev + 6;
+          const nextProg = prev + 6;
+          // Dynamically increment detected cell count as the laser sweeps
+          const incrementalCount = Math.min(expectedCount, Math.round((nextProg / 48) * expectedCount));
+          setDetectedCount(incrementalCount);
+          return nextProg;
         } else if (prev < 52) {
           setStage(2);
-          setDetectedCount(24);
+          setDetectedCount(expectedCount);
           return 55;
         } else if (prev < 95) {
           return prev + 5;
@@ -30,7 +34,7 @@ export default function ScanningLoader({ imageSrc, onScanComplete }) {
     }, 110);
 
     return () => clearInterval(interval);
-  }, [onScanComplete]);
+  }, [expectedCount, onScanComplete]);
 
   return (
     <div style={{
@@ -43,15 +47,15 @@ export default function ScanningLoader({ imageSrc, onScanComplete }) {
       position: 'relative',
       borderRadius: '12px',
       overflow: 'hidden',
-      background: 'rgba(7, 13, 25, 0.95)',
-      border: '1px solid var(--border-highlight)'
+      background: '#090e1a',
+      border: '1px solid var(--border-subtle)'
     }}>
-      {/* Background Smear with Scanning Laser & Grid */}
+      {/* Background Smear with Scanning Laser */}
       <div style={{
         position: 'absolute',
         inset: 0,
         opacity: 0.35,
-        filter: 'blur(1px) contrast(1.2)',
+        filter: 'blur(1px) contrast(1.1)',
         overflow: 'hidden'
       }}>
         {imageSrc && (
@@ -66,123 +70,123 @@ export default function ScanningLoader({ imageSrc, onScanComplete }) {
       <div className="scanner-grid-overlay" />
       <div className="scanner-laser-line" />
 
-      {/* Central Diagnostic Status Card */}
+      {/* Central Diagnostic Status Card (Scopio Clean Floating White Card) */}
       <div className="glass-panel" style={{
         position: 'relative',
         zIndex: 20,
         maxWidth: '520px',
         width: '90%',
         padding: '2rem',
-        border: '1px solid rgba(56, 189, 248, 0.4)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(6, 182, 212, 0.15)'
+        background: '#ffffff',
+        border: '1px solid var(--border-subtle)',
+        boxShadow: '0 20px 45px -5px rgba(0, 20, 55, 0.25)',
+        borderRadius: '14px'
       }}>
-        {/* Reticle / Pulse Header */}
+        {/* Reticle / Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              background: 'rgba(6, 182, 212, 0.15)',
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              background: '#fdf2f8',
+              border: '1px solid #fbcfe8',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--accent-sky)'
+              color: 'var(--scopio-magenta)'
             }}>
-              <Microscope size={20} className="animate-spin" />
+              <Microscope size={22} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#fff' }}>
-                Analyzing Microscopic Field
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                Scanning Monolayer Field
               </h3>
-              <p style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                Two-stage in-browser ONNX inference active
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                Full-Field Computational Morphology Pipeline
               </p>
             </div>
           </div>
-          <span className="clinical-badge badge-cyan" style={{ fontFamily: 'var(--font-mono)' }}>
+
+          <span className="clinical-badge badge-magenta" style={{ fontFamily: 'var(--font-mono)' }}>
             {progress}%
           </span>
         </div>
 
-        {/* Progress Bar */}
+        {/* Progress Bar (Scopio Magenta Gradient) */}
         <div style={{
           width: '100%',
-          height: '6px',
-          background: 'rgba(255, 255, 255, 0.08)',
-          borderRadius: '9999px',
+          height: '8px',
+          background: '#f1f5f9',
+          borderRadius: '999px',
           overflow: 'hidden',
-          marginBottom: '1.5rem'
+          marginBottom: '1.5rem',
+          border: '1px solid #e2e8f0'
         }}>
           <div style={{
             width: `${progress}%`,
             height: '100%',
-            background: 'linear-gradient(90deg, #06b6d4, #3b82f6)',
-            boxShadow: '0 0 10px #38bdf8',
-            transition: 'width 0.12s linear'
+            background: 'linear-gradient(90deg, #ef1aa9 0%, #372273 100%)',
+            transition: 'width 0.12s ease',
+            borderRadius: '999px'
           }} />
         </div>
 
-        {/* Pipeline Stages */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-          {/* Stage 1: MONAI U-Net */}
+        {/* Step-by-Step Diagnostic Indicators */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.84rem' }}>
+          {/* Step 1: Segmentation */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0.75rem 1rem',
+            padding: '0.65rem 0.85rem',
             borderRadius: '8px',
-            background: stage === 1 ? 'rgba(56, 189, 248, 0.12)' : 'var(--bg-card)',
-            border: stage === 1 ? '1px solid var(--accent-sky)' : '1px solid var(--border-subtle)',
-            transition: 'all 0.2s ease'
+            background: stage >= 1 ? '#f8fafc' : 'transparent',
+            border: stage >= 1 ? '1px solid #e2e8f0' : '1px solid transparent'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Layers size={18} color={stage >= 1 ? 'var(--accent-cyan)' : 'var(--text-dim)'} />
-              <div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>
-                  Stage 1: Cell Segmentation (MONAI U-Net)
-                </div>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                  {stage === 1 ? 'Extracting 256x256 tensor & isolating cell contours...' : '24 candidate erythrocyte regions isolated'}
-                </div>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <Layers size={16} color={stage >= 1 ? 'var(--scopio-magenta)' : 'var(--text-dim)'} />
+              <span style={{ color: stage >= 1 ? 'var(--text-main)' : 'var(--text-dim)', fontWeight: stage === 1 ? 600 : 500 }}>
+                1. Erythrocyte Segmentation (U-Net)
+              </span>
             </div>
             {stage > 1 ? (
-              <CheckCircle2 size={18} color="var(--accent-emerald)" />
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--accent-emerald)', fontSize: '0.76rem', fontWeight: 600 }}>
+                <CheckCircle2 size={14} /> {detectedCount} Cells Isolated
+              </span>
             ) : (
-              <Loader2 size={16} color="var(--accent-sky)" style={{ animation: 'reticleSpin 1s linear infinite' }} />
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--scopio-magenta)', fontSize: '0.76rem' }}>
+                <Loader2 size={13} className="animate-spin" /> Segmenting...
+              </span>
             )}
           </div>
 
-          {/* Stage 2: EfficientNet-B0 */}
+          {/* Step 2: Classification */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0.75rem 1rem',
+            padding: '0.65rem 0.85rem',
             borderRadius: '8px',
-            background: stage === 2 ? 'rgba(56, 189, 248, 0.12)' : 'var(--bg-card)',
-            border: stage === 2 ? '1px solid var(--accent-sky)' : '1px solid var(--border-subtle)',
-            transition: 'all 0.2s ease',
-            opacity: stage >= 2 ? 1 : 0.6
+            background: stage >= 2 ? '#f8fafc' : 'transparent',
+            border: stage >= 2 ? '1px solid #e2e8f0' : '1px solid transparent'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Cpu size={18} color={stage >= 2 ? 'var(--accent-teal)' : 'var(--text-dim)'} />
-              <div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>
-                  Stage 2: Morphology Classification (EfficientNet-B0)
-                </div>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                  {stage >= 2 ? 'Scoring crops across 13 classes with Focal Loss...' : 'Awaiting segmentation regions...'}
-                </div>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <Cpu size={16} color={stage >= 2 ? 'var(--scopio-magenta)' : 'var(--text-dim)'} />
+              <span style={{ color: stage >= 2 ? 'var(--text-main)' : 'var(--text-dim)', fontWeight: stage === 2 ? 600 : 500 }}>
+                2. 13-Class Morphological Classification (EfficientNet)
+              </span>
             </div>
-            {stage === 3 ? (
-              <CheckCircle2 size={18} color="var(--accent-emerald)" />
+            {stage > 2 ? (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--accent-emerald)', fontSize: '0.76rem', fontWeight: 600 }}>
+                <CheckCircle2 size={14} /> Complete
+              </span>
             ) : stage === 2 ? (
-              <Loader2 size={16} color="var(--accent-sky)" style={{ animation: 'reticleSpin 1s linear infinite' }} />
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--scopio-magenta)', fontSize: '0.76rem' }}>
+                <Loader2 size={13} className="animate-spin" /> Classifying...
+              </span>
             ) : (
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Queued</span>
+              <span style={{ color: 'var(--text-dim)', fontSize: '0.76rem' }}>Waiting</span>
             )}
           </div>
         </div>

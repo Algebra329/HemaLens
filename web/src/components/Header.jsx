@@ -1,16 +1,16 @@
 import React from 'react';
-import { Activity, ShieldCheck, WifiOff, Cpu } from 'lucide-react';
+import { Microscope, ShieldCheck, WifiOff, Cpu, Sparkles } from 'lucide-react';
 
 export default function Header() {
   return (
     <header style={{
-      background: 'rgba(10, 15, 29, 0.95)',
+      background: '#ffffff',
       borderBottom: '1px solid var(--border-subtle)',
       padding: '0.85rem 2rem',
       position: 'sticky',
       top: 0,
       zIndex: 40,
-      backdropFilter: 'blur(10px)'
+      boxShadow: 'var(--shadow-sm)'
     }}>
       <div style={{
         maxWidth: '1440px',
@@ -21,55 +21,50 @@ export default function Header() {
         flexWrap: 'wrap',
         gap: '1rem'
       }}>
-        {/* Logo & Clinical Title */}
+        {/* Brand & Product Identifier (Scopio Labs Inspired) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           <div style={{
-            width: '40px',
-            height: '40px',
+            width: '42px',
+            height: '42px',
             borderRadius: '10px',
-            background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.3))',
-            border: '1px solid rgba(56, 189, 248, 0.4)',
+            background: 'linear-gradient(135deg, #001437 0%, #372273 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--accent-sky)',
-            boxShadow: '0 0 15px rgba(6, 182, 212, 0.25)'
+            color: '#ffffff',
+            boxShadow: '0 4px 12px rgba(0, 20, 55, 0.15)'
           }}>
-            <Activity size={22} />
+            <Microscope size={22} color="#ffffff" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <h1 style={{ fontSize: '1.2rem', fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>
-                HemaScan <span style={{ color: 'var(--accent-cyan)', fontWeight: 400 }}>AI</span>
+              <h1 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
+                HemaScan <span style={{ color: 'var(--scopio-magenta)', fontWeight: 800 }}>AI</span>
               </h1>
-              <span className="clinical-badge badge-cyan" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>
-                v1.0 • UnivaBio
+              <span className="clinical-badge badge-magenta" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>
+                Full-Field Morphology
               </span>
             </div>
             <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Point-of-Care Red Blood Cell Morphology Analyzer
+              Point-of-Care Digital Cell Morphology System • UnivaBio Edition
             </p>
           </div>
         </div>
 
-        {/* Operational Status Badges */}
+        {/* Operational Status Indicators (Scopio Clean Pill Styling) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
           <div className="clinical-badge badge-emerald" title="Application operates entirely without an active internet connection">
             <WifiOff size={13} />
             <span>100% Offline Capable</span>
           </div>
 
-          <div className="clinical-badge badge-cyan" title="Models execute on client device hardware via WebAssembly/WebGL">
+          <div className="clinical-badge badge-cyan" title="Models execute on client device hardware via WebAssembly">
             <Cpu size={13} />
-            <span>WASM Inference</span>
+            <span>Client WASM Engine</span>
           </div>
 
-          <div className="clinical-badge" style={{
-            background: 'rgba(59, 130, 246, 0.1)',
-            color: 'var(--accent-sky)',
-            border: '1px solid rgba(59, 130, 246, 0.3)'
-          }} title="No patient images are transmitted or saved outside the browser">
-            <ShieldCheck size={13} />
+          <div className="clinical-badge badge-navy" title="No patient images are transmitted or saved outside the browser">
+            <ShieldCheck size={13} color="var(--scopio-magenta)" />
             <span>Zero Data Egress</span>
           </div>
         </div>

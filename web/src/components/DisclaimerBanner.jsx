@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertTriangle, Info, X } from 'lucide-react';
+import { AlertTriangle, X } from 'lucide-react';
 
 export default function DisclaimerBanner() {
   const [dismissed, setDismissed] = useState(false);
@@ -8,10 +8,10 @@ export default function DisclaimerBanner() {
 
   return (
     <aside style={{
-      background: 'rgba(245, 158, 11, 0.08)',
-      borderBottom: '1px solid rgba(245, 158, 11, 0.25)',
+      background: '#fffbeb',
+      borderBottom: '1px solid #fde68a',
       padding: '0.65rem 2rem',
-      color: '#fef3c7',
+      color: '#92400e',
       fontSize: '0.82rem',
       display: 'flex',
       alignItems: 'center',
@@ -26,9 +26,9 @@ export default function DisclaimerBanner() {
         gap: '0.65rem',
         flex: 1
       }}>
-        <AlertTriangle size={16} color="var(--accent-amber)" style={{ flexShrink: 0 }} />
+        <AlertTriangle size={16} color="#d97706" style={{ flexShrink: 0 }} />
         <span>
-          <strong>Clinical Decision Support / Research Demo:</strong> This software classifies morphological features in peripheral blood smears for triage and research purposes only. It is not an autonomous diagnostic medical device. Morphological findings must always be correlated with clinical history and reviewed by a qualified laboratory hematologist.
+          <strong>Decision-Support Notice:</strong> This platform performs algorithmic pre-characterization of peripheral blood smear micrographs for clinical research and triage. It does not replace diagnostic judgment. All findings must be corroborated by a qualified clinical pathologist.
         </span>
       </div>
       <button
@@ -37,15 +37,16 @@ export default function DisclaimerBanner() {
         style={{
           background: 'none',
           border: 'none',
-          color: 'var(--text-muted)',
+          color: '#b45309',
           cursor: 'pointer',
           padding: '0.2rem',
           display: 'flex',
           alignItems: 'center',
+          borderRadius: '4px',
           transition: 'color 0.15s ease'
         }}
-        onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+        onMouseEnter={(e) => e.currentTarget.style.color = '#78350f'}
+        onMouseLeave={(e) => e.currentTarget.style.color = '#b45309'}
       >
         <X size={15} />
       </button>

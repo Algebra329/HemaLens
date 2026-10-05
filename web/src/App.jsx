@@ -6,6 +6,8 @@ import ImageUploader from './components/ImageUploader';
 import ScanningLoader from './components/ScanningLoader';
 import SmearCanvas from './components/SmearCanvas';
 import CellInspectorModal from './components/CellInspectorModal';
+import CellGalleryTray from './components/CellGalleryTray';
+import ClinicalReportModal from './components/ClinicalReportModal';
 import { checkModelsDeployed, runInferencePipeline } from './inference/pipeline';
 import { Microscope, RotateCcw, Check, Sparkles, Cpu, Layers } from 'lucide-react';
 
@@ -85,6 +87,15 @@ export default function App() {
   const [selectedClass, setSelectedClass] = useState(null);
   const [inspectingCell, setInspectingCell] = useState(null);
   const [isRealOnnxActive, setIsRealOnnxActive] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [hiddenClasses, setHiddenClasses] = useState([]);
+  const [hoveredCellId, setHoveredCellId] = useState(null);
+
+  const toggleHideClass = (className) => {
+    setHiddenClasses(prev =>
+      prev.includes(className) ? prev.filter(c => c !== className) : [...prev, className]
+    );
+  };
 
   const hiddenImgRef = useRef(null);
 
@@ -101,6 +112,9 @@ export default function App() {
     setScanDone(false);
     setResults(null);
     setInspectingCell(null);
+    setShowReportModal(false);
+    setHiddenClasses([]);
+    setHoveredCellId(null);
   };
 
   const handleScanComplete = async () => {
@@ -136,6 +150,9 @@ export default function App() {
     setResults(null);
     setSelectedClass(null);
     setInspectingCell(null);
+    setShowReportModal(false);
+    setHiddenClasses([]);
+    setHoveredCellId(null);
   };
 
   return (
@@ -151,7 +168,7 @@ export default function App() {
         />
       )}
 
-      {/* 1. Header */}
+      {/* 1. Header (Scopio Clean Style) */}
       <Header />
 
       {/* 2. Regulatory Notice */}
@@ -161,11 +178,11 @@ export default function App() {
       <main style={{
         maxWidth: '1440px',
         width: '100%',
-        margin: '1.5rem auto',
+        margin: '1.75rem auto',
         padding: '0 1.5rem',
         flex: 1,
         display: 'flex',
-        gap: '1.5rem',
+        gap: '1.75rem',
         alignItems: 'flex-start'
       }}>
         {/* Left / Center Area: Smear Stage */}
@@ -176,13 +193,13 @@ export default function App() {
           gap: '1.25rem',
           minWidth: 0
         }}>
-          {/* Milestone Indicator Card */}
-          <div className="glass-panel" style={{ padding: '1.25rem 1.5rem' }}>
+          {/* Milestone Indicator Card (Scopio Style) */}
+          <div className="glass-panel" style={{ padding: '1.25rem 1.6rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
                   <span className="clinical-badge badge-emerald">
-                    <Check size={12} /> Step 5: Dual-Mode ONNX Engine Active
+                    <Check size={12} /> Step 5: Dual-Stage Neural Pipeline
                   </span>
 
                   {isRealOnnxActive ? (
@@ -190,18 +207,18 @@ export default function App() {
                       <Cpu size={12} /> Live ONNX Models Loaded
                     </span>
                   ) : (
-                    <span className="clinical-badge badge-amber" title="Awaiting exported .onnx files in web/public/models/">
-                      <Sparkles size={12} /> Calibrated Simulation Engine
+                    <span className="clinical-badge badge-magenta" title="Awaiting exported .onnx files in web/public/models/">
+                      <Sparkles size={12} /> Full-Field Calibrated Engine
                     </span>
                   )}
                 </div>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)' }}>
-                  Peripheral Smear Diagnostic Stage
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
+                  Peripheral Smear Examination Stage
                 </h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.84rem' }}>
                   {scanDone
-                    ? 'Inference completed. Hover over cells or click any bounding box to open the zoomed diagnostic inspector.'
-                    : 'Select a clinical preset or drop a blood smear to run detection.'}
+                    ? 'Inference completed. Hover over cells or click any bounding box to open the full-field diagnostic inspector.'
+                    : 'Select a clinical sample or upload a blood smear micrograph to begin analysis.'}
                 </p>
               </div>
 
@@ -212,18 +229,24 @@ export default function App() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    padding: '0.55rem 1rem',
-                    background: 'var(--bg-card)',
+                    padding: '0.55rem 1.1rem',
+                    background: '#ffffff',
                     color: 'var(--text-main)',
-                    border: '1px solid var(--border-subtle)',
+                    border: '1px solid #001437',
                     borderRadius: '8px',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: '0.82rem',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--accent-sky)'}
-                  onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--scopio-magenta)';
+                    e.currentTarget.style.color = 'var(--scopio-magenta)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#001437';
+                    e.currentTarget.style.color = 'var(--text-main)';
+                  }}
                 >
                   <RotateCcw size={15} />
                   <span>Analyze Another Smear</span>
@@ -248,17 +271,37 @@ export default function App() {
             {selectedImage && isScanning && (
               <ScanningLoader
                 imageSrc={selectedImage.src}
+                expectedCount={
+                  selectedImage?.presetId && PRESET_RESULTS[selectedImage.presetId]
+                    ? PRESET_RESULTS[selectedImage.presetId].length
+                    : 21
+                }
                 onScanComplete={handleScanComplete}
               />
             )}
 
             {selectedImage && scanDone && (
-              <SmearCanvas
-                imageSrc={selectedImage.src}
-                results={results}
-                selectedClass={selectedClass}
-                onSelectCell={setInspectingCell}
-              />
+              <>
+                <SmearCanvas
+                  imageSrc={selectedImage.src}
+                  results={results}
+                  selectedClass={selectedClass}
+                  hiddenClasses={hiddenClasses}
+                  onSelectCell={setInspectingCell}
+                  onOpenReport={() => setShowReportModal(true)}
+                  hoveredCellId={hoveredCellId}
+                  onHoverCell={setHoveredCellId}
+                />
+                <CellGalleryTray
+                  results={results}
+                  imageSrc={selectedImage.src}
+                  selectedClass={selectedClass}
+                  onSelectClass={setSelectedClass}
+                  hoveredCellId={hoveredCellId}
+                  onHoverCell={setHoveredCellId}
+                  onSelectCell={setInspectingCell}
+                />
+              </>
             )}
           </div>
         </section>
@@ -268,30 +311,45 @@ export default function App() {
           results={results}
           selectedClass={selectedClass}
           onSelectClass={setSelectedClass}
+          hiddenClasses={hiddenClasses}
+          onToggleHideClass={toggleHideClass}
+          onOpenReport={() => setShowReportModal(true)}
         />
       </main>
 
-      {/* 4. Cell Inspector Zoom Modal */}
+      {/* 4. Cell Inspector Zoom Modal (CellaVision Classroom Style) */}
       {inspectingCell && selectedImage && (
         <CellInspectorModal
           cell={inspectingCell}
+          allCells={results}
           imageSrc={selectedImage.src}
           onClose={() => setInspectingCell(null)}
+          onSelectCell={setInspectingCell}
         />
       )}
 
-      {/* 5. Clinical Footer */}
+      {/* 5. Sight OLO / Scopio Formatted Clinical Report Modal */}
+      {showReportModal && (
+        <ClinicalReportModal
+          results={results}
+          imageSrc={selectedImage?.src}
+          onClose={() => setShowReportModal(false)}
+        />
+      )}
+
+      {/* 6. Clinical Footer (Scopio Clean Style) */}
       <footer style={{
         borderTop: '1px solid var(--border-subtle)',
-        padding: '1rem 2rem',
-        background: 'rgba(10, 15, 29, 0.95)',
-        fontSize: '0.78rem',
+        padding: '1.25rem 2rem',
+        background: '#ffffff',
+        fontSize: '0.8rem',
         color: 'var(--text-dim)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '0.5rem'
+        gap: '0.75rem',
+        boxShadow: 'var(--shadow-sm)'
       }}>
         <div>
           Built for the <strong>UnivaBio Hackathon (BioCatalysis × UnivaDev)</strong> • Chula-RBC-12 Reference Pipeline
@@ -299,7 +357,7 @@ export default function App() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span>Offline WebAssembly Architecture</span>
           <span>•</span>
-          <span style={{ color: 'var(--accent-emerald)' }}>Client-Side Confidentiality</span>
+          <span style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>Zero Data Egress / On-Device Privacy</span>
         </div>
       </footer>
     </div>

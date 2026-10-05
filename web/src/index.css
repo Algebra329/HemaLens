@@ -1,28 +1,43 @@
 :root {
-  --bg-primary: #070d19;
-  --bg-surface: #0e172a;
-  --bg-card: #14223b;
-  --bg-card-hover: #1b2e4f;
-  --bg-elevated: #1a2a47;
+  /* Scopio Labs Inspired Clinical Design System */
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-elevated: #f8fafc;
+  --bg-stage: #090e1a;
   
-  --border-subtle: #1e3252;
-  --border-focus: #38bdf8;
-  --border-highlight: rgba(56, 189, 248, 0.3);
+  --border-subtle: #e2e8f0;
+  --border-focus: #ef1aa9;
+  --border-highlight: #cbd5e1;
   
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  /* Scopio Signature Deep Navy Typography */
+  --text-main: #001437;
+  --text-muted: #475569;
   --text-dim: #64748b;
   
-  --accent-cyan: #06b6d4;
-  --accent-sky: #38bdf8;
-  --accent-blue: #3b82f6;
-  --accent-teal: #14b8a6;
+  /* Scopio Labs Signature Brand Accents */
+  --scopio-magenta: #ef1aa9;
+  --scopio-purple: #372273;
+  --scopio-navy: #001437;
+  --scopio-teal: #00d2b4;
+  --scopio-blue: #0284c7;
+
+  --accent-cyan: #0284c7;
+  --accent-sky: #0ea5e9;
+  --accent-blue: #2563eb;
+  --accent-teal: #0d9488;
   --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-rose: #f43f5e;
+  --accent-amber: #d97706;
+  --accent-rose: #ef1aa9;
   
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Satoshi', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 20, 55, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 20, 55, 0.08), 0 2px 4px -2px rgba(0, 20, 55, 0.06);
+  --shadow-lg: 0 10px 25px -3px rgba(0, 20, 55, 0.08), 0 4px 6px -4px rgba(0, 20, 55, 0.04);
+  --shadow-xl: 0 20px 40px -6px rgba(0, 20, 55, 0.12);
 }
 
 * {
@@ -52,66 +67,84 @@ code, pre {
   font-family: var(--font-mono);
 }
 
-/* Glassmorphism & Cards */
+/* Scopio-Style Clean Panels & Cards */
 .glass-panel {
-  background: rgba(14, 23, 42, 0.85);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
+.glass-panel:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Scopio Clinical Status Badges */
 .clinical-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   padding: 0.25rem 0.65rem;
   border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .badge-cyan {
-  background: rgba(6, 182, 212, 0.12);
-  color: var(--accent-cyan);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: #f0fdfa;
+  color: #0d9488;
+  border: 1px solid #99f6e4;
 }
 
 .badge-emerald {
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--accent-emerald);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
 }
 
 .badge-amber {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--accent-amber);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
 }
 
 .badge-rose {
-  background: rgba(244, 63, 94, 0.12);
-  color: var(--accent-rose);
-  border: 1px solid rgba(244, 63, 94, 0.3);
+  background: #fdf2f8;
+  color: #be185d;
+  border: 1px solid #fbcfe8;
 }
 
-/* Custom Scrollbars */
+.badge-magenta {
+  background: #fdf2f8;
+  color: #ef1aa9;
+  border: 1px solid #fbcfe8;
+}
+
+.badge-navy {
+  background: #f1f5f9;
+  color: #001437;
+  border: 1px solid #cbd5e1;
+}
+
+/* Custom Clean Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-subtle);
+  background: #cbd5e1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-dim);
+  background: #94a3b8;
 }
 
-/* Scanner Laser & Reticle Animations */
+/* Scopio Microscope Scanning Laser & Grid */
 @keyframes laserSweep {
   0% {
     top: 0%;
@@ -126,33 +159,13 @@ code, pre {
   }
 }
 
-@keyframes scanPulse {
-  0%, 100% {
-    opacity: 0.3;
-    transform: scale(0.98);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.02);
-  }
-}
-
-@keyframes reticleSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .scanner-laser-line {
   position: absolute;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, transparent 0%, var(--accent-cyan) 30%, #38bdf8 50%, var(--accent-cyan) 70%, transparent 100%);
-  box-shadow: 0 0 18px #38bdf8, 0 0 35px rgba(6, 182, 212, 0.7);
+  background: linear-gradient(90deg, transparent 0%, #ef1aa9 30%, #372273 50%, #ef1aa9 70%, transparent 100%);
+  box-shadow: 0 0 16px #ef1aa9, 0 0 28px rgba(239, 26, 169, 0.6);
   animation: laserSweep 2s ease-in-out infinite alternate;
   z-index: 10;
   pointer-events: none;
@@ -162,10 +175,36 @@ code, pre {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+    linear-gradient(rgba(239, 26, 169, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(239, 26, 169, 0.08) 1px, transparent 1px);
   background-size: 32px 32px;
   pointer-events: none;
   z-index: 5;
 }
 
+/* Print Media Styles (Clean Hospital Laboratory Printout) */
+@media print {
+  body, html {
+    background: #ffffff !important;
+    color: #001437 !important;
+  }
+  
+  header, footer, .clinical-badge, button, input[type="range"], aside, .scanner-laser-line {
+    display: none !important;
+  }
+
+  .report-sheet {
+    position: static !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    color: #001437 !important;
+  }
+
+  .glass-panel {
+    background: #ffffff !important;
+    color: #001437 !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+}
