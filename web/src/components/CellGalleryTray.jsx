@@ -73,11 +73,21 @@ export default function CellGalleryTray({
           </span>
         </div>
 
-        {/* Filter Pills */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+        {/* Filter Pills (Swipeable on Mobile) */}
+        <div className="horizontal-scroll-row" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.4rem',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          maxWidth: '100%',
+          paddingBottom: '4px'
+        }}>
           <button
             onClick={() => handleTabClick('all')}
+            className="touch-friendly-button"
             style={{
+              flexShrink: 0,
               fontSize: '0.75rem',
               fontWeight: 600,
               padding: '0.28rem 0.7rem',
@@ -86,6 +96,7 @@ export default function CellGalleryTray({
               background: activeTab === 'all' ? '#001437' : '#ffffff',
               color: activeTab === 'all' ? '#ffffff' : '#475569',
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
               transition: 'all 0.15s ease'
             }}
           >
@@ -94,7 +105,9 @@ export default function CellGalleryTray({
 
           <button
             onClick={() => handleTabClick('atypical')}
+            className="touch-friendly-button"
             style={{
+              flexShrink: 0,
               fontSize: '0.75rem',
               fontWeight: 600,
               padding: '0.28rem 0.7rem',
@@ -103,10 +116,11 @@ export default function CellGalleryTray({
               background: activeTab === 'atypical' ? 'var(--scopio-magenta)' : '#ffffff',
               color: activeTab === 'atypical' ? '#ffffff' : '#475569',
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
               transition: 'all 0.15s ease'
             }}
           >
-            Atypical Only ({atypicalCells.length})
+            Atypical ({atypicalCells.length})
           </button>
 
           {Object.entries(cellsByClass).map(([className, cells]) => {
@@ -116,7 +130,9 @@ export default function CellGalleryTray({
               <button
                 key={className}
                 onClick={() => handleTabClick(className)}
+                className="touch-friendly-button"
                 style={{
+                  flexShrink: 0,
                   fontSize: '0.74rem',
                   fontWeight: 600,
                   padding: '0.28rem 0.65rem',
@@ -128,6 +144,7 @@ export default function CellGalleryTray({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.35rem',
+                  whiteSpace: 'nowrap',
                   transition: 'all 0.15s ease'
                 }}
               >

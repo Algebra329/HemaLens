@@ -71,38 +71,39 @@ export default function ScanningLoader({ imageSrc, expectedCount = 21, onScanCom
       <div className="scanner-laser-line" />
 
       {/* Central Diagnostic Status Card (Scopio Clean Floating White Card) */}
-      <div className="glass-panel" style={{
+      <div className="glass-panel modal-content-responsive" style={{
         position: 'relative',
         zIndex: 20,
         maxWidth: '520px',
-        width: '90%',
-        padding: '2rem',
+        width: '92%',
+        padding: '1.5rem',
         background: '#ffffff',
         border: '1px solid var(--border-subtle)',
         boxShadow: '0 20px 45px -5px rgba(0, 20, 55, 0.25)',
         borderRadius: '14px'
       }}>
         {/* Reticle / Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.15rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <div style={{
-              width: '40px',
-              height: '40px',
+              width: '38px',
+              height: '38px',
               borderRadius: '10px',
               background: '#fdf2f8',
               border: '1px solid #fbcfe8',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--scopio-magenta)'
+              color: 'var(--scopio-magenta)',
+              flexShrink: 0
             }}>
-              <Microscope size={22} />
+              <Microscope size={20} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
                 Scanning Monolayer Field
               </h3>
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
                 Full-Field Computational Morphology Pipeline
               </p>
             </div>
@@ -120,7 +121,7 @@ export default function ScanningLoader({ imageSrc, expectedCount = 21, onScanCom
           background: '#f1f5f9',
           borderRadius: '999px',
           overflow: 'hidden',
-          marginBottom: '1.5rem',
+          marginBottom: '1.25rem',
           border: '1px solid #e2e8f0'
         }}>
           <div style={{
@@ -133,29 +134,31 @@ export default function ScanningLoader({ imageSrc, expectedCount = 21, onScanCom
         </div>
 
         {/* Step-by-Step Diagnostic Indicators */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.84rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.82rem' }}>
           {/* Step 1: Segmentation */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0.65rem 0.85rem',
+            padding: '0.6rem 0.8rem',
             borderRadius: '8px',
             background: stage >= 1 ? '#f8fafc' : 'transparent',
-            border: stage >= 1 ? '1px solid #e2e8f0' : '1px solid transparent'
+            border: stage >= 1 ? '1px solid #e2e8f0' : '1px solid transparent',
+            flexWrap: 'wrap',
+            gap: '0.4rem'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <Layers size={16} color={stage >= 1 ? 'var(--scopio-magenta)' : 'var(--text-dim)'} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+              <Layers size={15} color={stage >= 1 ? 'var(--scopio-magenta)' : 'var(--text-dim)'} />
               <span style={{ color: stage >= 1 ? 'var(--text-main)' : 'var(--text-dim)', fontWeight: stage === 1 ? 600 : 500 }}>
                 1. Erythrocyte Segmentation (U-Net)
               </span>
             </div>
             {stage > 1 ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--accent-emerald)', fontSize: '0.76rem', fontWeight: 600 }}>
-                <CheckCircle2 size={14} /> {detectedCount} Cells Isolated
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--accent-emerald)', fontSize: '0.74rem', fontWeight: 600 }}>
+                <CheckCircle2 size={13} /> {detectedCount} Cells Isolated
               </span>
             ) : (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--scopio-magenta)', fontSize: '0.76rem' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--scopio-magenta)', fontSize: '0.74rem' }}>
                 <Loader2 size={13} className="animate-spin" /> Segmenting...
               </span>
             )}
@@ -166,27 +169,29 @@ export default function ScanningLoader({ imageSrc, expectedCount = 21, onScanCom
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0.65rem 0.85rem',
+            padding: '0.6rem 0.8rem',
             borderRadius: '8px',
             background: stage >= 2 ? '#f8fafc' : 'transparent',
-            border: stage >= 2 ? '1px solid #e2e8f0' : '1px solid transparent'
+            border: stage >= 2 ? '1px solid #e2e8f0' : '1px solid transparent',
+            flexWrap: 'wrap',
+            gap: '0.4rem'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <Cpu size={16} color={stage >= 2 ? 'var(--scopio-magenta)' : 'var(--text-dim)'} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+              <Cpu size={15} color={stage >= 2 ? 'var(--scopio-magenta)' : 'var(--text-dim)'} />
               <span style={{ color: stage >= 2 ? 'var(--text-main)' : 'var(--text-dim)', fontWeight: stage === 2 ? 600 : 500 }}>
-                2. 13-Class Morphological Classification (EfficientNet)
+                2. 13-Class Morphology (EfficientNet)
               </span>
             </div>
             {stage > 2 ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--accent-emerald)', fontSize: '0.76rem', fontWeight: 600 }}>
-                <CheckCircle2 size={14} /> Complete
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--accent-emerald)', fontSize: '0.74rem', fontWeight: 600 }}>
+                <CheckCircle2 size={13} /> Complete
               </span>
             ) : stage === 2 ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--scopio-magenta)', fontSize: '0.76rem' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--scopio-magenta)', fontSize: '0.74rem' }}>
                 <Loader2 size={13} className="animate-spin" /> Classifying...
               </span>
             ) : (
-              <span style={{ color: 'var(--text-dim)', fontSize: '0.76rem' }}>Waiting</span>
+              <span style={{ color: 'var(--text-dim)', fontSize: '0.74rem' }}>Waiting</span>
             )}
           </div>
         </div>

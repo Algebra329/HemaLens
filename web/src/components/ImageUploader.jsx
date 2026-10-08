@@ -153,8 +153,8 @@ export default function ImageUploader({ onSelectImage }) {
         {/* 3 Clean Preset Cards (Scopio Card Style) */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '1.25rem'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+          gap: '1rem'
         }}>
           {PRESET_SAMPLES.map((preset) => (
             <div

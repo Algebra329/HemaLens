@@ -19,12 +19,40 @@ export default function SmearCanvas({
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
 
+  // Responsive Viewport Measurement
+  const [containerSize, setContainerSize] = useState({ width: 800, height: 540 });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateSize = () => {
+      if (containerRef.current) {
+        const cw = containerRef.current.clientWidth;
+        // Keep proportional 4:3 style height: max 540px, min 260px, approx 70% of width on mobile
+        const ch = Math.min(540, Math.max(260, Math.round(cw * 0.72)));
+        setContainerSize({ width: cw, height: ch });
+      }
+    };
+    updateSize();
+    const ro = new ResizeObserver(updateSize);
+    ro.observe(containerRef.current);
+    window.addEventListener('resize', updateSize);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', updateSize);
+    };
+  }, []);
+
+  // Base fit scale to ensure the 800x600 micrograph fits completely on mobile screens
+  const baseScale = Math.min(containerSize.width / 800, containerSize.height / 600);
+  const effectiveScale = (baseScale > 0 ? baseScale : 1) * zoomLevel;
+
   // Microscope Viewport State (Zoom & Pan - Scopio Labs / Proscia Concentriq pattern)
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [activeTool, setActiveTool] = useState('inspect'); // 'inspect' | 'pan'
+  const touchStartRef = useRef({ x: 0, y: 0, moved: false, time: 0 });
 
   // Canvas View Controls
   const [showBoundingBoxes, setShowBoundingBoxes] = useState(true);
@@ -185,6 +213,57 @@ export default function SmearCanvas({
     }
   };
 
+  // Mobile Touch Support: Swipe Pan and Tap-to-Inspect
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      touchStartRef.current = { x: t.clientX, y: t.clientY, moved: false, time: Date.now() };
+      if (activeTool === 'pan' || zoomLevel > 1) {
+        setIsPanning(true);
+        setPanStart({ x: t.clientX, y: t.clientY });
+      }
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartRef.current.x;
+      const dy = t.clientY - touchStartRef.current.y;
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        touchStartRef.current.moved = true;
+      }
+      if (isPanning || activeTool === 'pan' || zoomLevel > 1) {
+        const maxPanX = 250 * Math.max(1, zoomLevel - 0.5);
+        const maxPanY = 200 * Math.max(1, zoomLevel - 0.5);
+        setPanOffset(prev => ({
+          x: Math.max(-maxPanX, Math.min(maxPanX, prev.x + (t.clientX - panStart.x))),
+          y: Math.max(-maxPanY, Math.min(maxPanY, prev.y + (t.clientY - panStart.y)))
+        }));
+        setPanStart({ x: t.clientX, y: t.clientY });
+      }
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    setIsPanning(false);
+    // If user tapped without dragging, detect cell under touch and inspect
+    if (!touchStartRef.current.moved && (Date.now() - touchStartRef.current.time < 350)) {
+      const t = e.changedTouches[0];
+      if (t) {
+        const coords = getCanvasCoords({ clientX: t.clientX, clientY: t.clientY });
+        const hit = filteredResults.find((c) => {
+          const [bx, by, bw, bh] = c.bbox || [0, 0, 50, 50];
+          // 12px generous touch target hit area
+          return coords.x >= bx - 12 && coords.x <= bx + bw + 12 && coords.y >= by - 12 && coords.y <= by + bh + 12;
+        });
+        if (hit && onSelectCell) {
+          onSelectCell(hit);
+        }
+      }
+    }
+  };
+
   // Zoom Helpers
   const handleZoomIn = () => {
     setZoomLevel(prev => Math.min(4, +(prev + 0.5).toFixed(1)));
@@ -226,26 +305,27 @@ export default function SmearCanvas({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0.65rem 1rem',
+        padding: '0.65rem 0.85rem',
         background: '#ffffff',
         borderRadius: '10px',
         border: '1px solid var(--border-subtle)',
         boxShadow: 'var(--shadow-sm)',
         flexWrap: 'wrap',
-        gap: '0.65rem'
+        gap: '0.5rem'
       }}>
         {/* Left: Viewport Controls & Tool Mode */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
           {/* Tool Selector: Inspect vs Pan */}
           <div style={{ display: 'flex', background: '#f1f5f9', padding: '2px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
             <button
               onClick={() => setActiveTool('inspect')}
               title="Inspect Cell Tool"
+              className="touch-friendly-button"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                padding: '0.32rem 0.7rem',
+                padding: '0.32rem 0.65rem',
                 background: activeTool === 'inspect' ? '#001437' : 'transparent',
                 color: activeTool === 'inspect' ? '#ffffff' : '#64748b',
                 fontWeight: activeTool === 'inspect' ? 600 : 500,
@@ -263,11 +343,12 @@ export default function SmearCanvas({
             <button
               onClick={() => setActiveTool('pan')}
               title="Pan Slide Tool"
+              className="touch-friendly-button"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                padding: '0.32rem 0.7rem',
+                padding: '0.32rem 0.65rem',
                 background: activeTool === 'pan' ? '#001437' : 'transparent',
                 color: activeTool === 'pan' ? '#ffffff' : '#64748b',
                 fontWeight: activeTool === 'pan' ? 600 : 500,
@@ -279,12 +360,12 @@ export default function SmearCanvas({
               }}
             >
               <Move size={13} />
-              <span>Pan Slide</span>
+              <span>Pan</span>
             </button>
           </div>
 
           {/* Zoom Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderRadius: '8px', border: '1px solid #cbd5e1', padding: '0 0.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderRadius: '8px', border: '1px solid #cbd5e1', padding: '0 0.2rem' }}>
             <button
               onClick={handleZoomOut}
               disabled={zoomLevel <= 1}
@@ -293,7 +374,7 @@ export default function SmearCanvas({
                 border: 'none',
                 color: zoomLevel <= 1 ? '#94a3b8' : '#001437',
                 cursor: zoomLevel <= 1 ? 'default' : 'pointer',
-                padding: '0.35rem 0.45rem',
+                padding: '0.35rem 0.4rem',
                 display: 'flex',
                 alignItems: 'center'
               }}
@@ -302,7 +383,7 @@ export default function SmearCanvas({
               <ZoomOut size={14} />
             </button>
 
-            <span style={{ fontSize: '0.76rem', fontWeight: 600, fontFamily: 'var(--font-mono)', minWidth: '42px', textAlign: 'center', color: '#001437' }}>
+            <span style={{ fontSize: '0.74rem', fontWeight: 600, fontFamily: 'var(--font-mono)', minWidth: '38px', textAlign: 'center', color: '#001437' }}>
               {Math.round(zoomLevel * 100)}%
             </span>
 
@@ -314,7 +395,7 @@ export default function SmearCanvas({
                 border: 'none',
                 color: zoomLevel >= 4 ? '#94a3b8' : '#001437',
                 cursor: zoomLevel >= 4 ? 'default' : 'pointer',
-                padding: '0.35rem 0.45rem',
+                padding: '0.35rem 0.4rem',
                 display: 'flex',
                 alignItems: 'center'
               }}
@@ -332,7 +413,7 @@ export default function SmearCanvas({
                   border: 'none',
                   color: 'var(--scopio-magenta)',
                   cursor: 'pointer',
-                  padding: '0.35rem 0.45rem',
+                  padding: '0.35rem 0.4rem',
                   display: 'flex',
                   alignItems: 'center'
                 }}
@@ -345,48 +426,50 @@ export default function SmearCanvas({
           {/* Filter Atypical */}
           <button
             onClick={() => setHighlightAtypicalOnly(!highlightAtypicalOnly)}
+            className="touch-friendly-button"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.35rem',
-              padding: '0.35rem 0.75rem',
+              padding: '0.35rem 0.65rem',
               background: highlightAtypicalOnly ? '#fdf2f8' : '#ffffff',
               border: highlightAtypicalOnly ? '1px solid var(--scopio-magenta)' : '1px solid #cbd5e1',
               borderRadius: '8px',
               color: highlightAtypicalOnly ? 'var(--scopio-magenta)' : '#475569',
-              fontSize: '0.75rem',
+              fontSize: '0.74rem',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease'
             }}
           >
             <Filter size={12} />
-            <span>Atypical Only</span>
+            <span>Atypical</span>
           </button>
 
           {/* Confidence Slider Toggle */}
           <div style={{ position: 'relative' }}>
             <button
               onClick={() => setShowThresholdSlider(!showThresholdSlider)}
+              className="touch-friendly-button"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                padding: '0.35rem 0.75rem',
+                padding: '0.35rem 0.65rem',
                 background: showThresholdSlider ? '#f0fdfa' : '#ffffff',
                 border: showThresholdSlider ? '1px solid var(--scopio-teal)' : '1px solid #cbd5e1',
                 borderRadius: '8px',
                 color: showThresholdSlider ? 'var(--scopio-teal)' : '#475569',
-                fontSize: '0.75rem',
+                fontSize: '0.74rem',
                 fontWeight: 600,
                 cursor: 'pointer'
               }}
             >
               <Sliders size={12} />
-              <span>Threshold ≥ {Math.round(confidenceThreshold * 100)}%</span>
+              <span>≥ {Math.round(confidenceThreshold * 100)}%</span>
             </button>
 
-            {/* Slider Dropdown Popover */}
+            {/* Slider Dropdown Popover (responsive positioning) */}
             {showThresholdSlider && (
               <div style={{
                 position: 'absolute',
@@ -398,7 +481,8 @@ export default function SmearCanvas({
                 padding: '0.85rem 1.1rem',
                 zIndex: 40,
                 boxShadow: 'var(--shadow-xl)',
-                width: '220px'
+                width: '210px',
+                maxWidth: 'calc(100vw - 2.5rem)'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-dim)', marginBottom: '0.35rem' }}>
                   <span>Confidence Cutoff</span>
@@ -423,16 +507,17 @@ export default function SmearCanvas({
           <button
             onClick={() => setShowLabels(!showLabels)}
             title="Toggle Cell Class Tag Overlays"
+            className="touch-friendly-button"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.35rem',
-              padding: '0.35rem 0.75rem',
+              padding: '0.35rem 0.65rem',
               background: showLabels ? '#f1f5f9' : '#ffffff',
               border: showLabels ? '1px solid #94a3b8' : '1px solid #cbd5e1',
               borderRadius: '8px',
               color: showLabels ? '#001437' : '#64748b',
-              fontSize: '0.75rem',
+              fontSize: '0.74rem',
               fontWeight: 500,
               cursor: 'pointer'
             }}
@@ -443,24 +528,25 @@ export default function SmearCanvas({
         </div>
 
         {/* Right: Detected Count & Print Report Trigger */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-            Visible: <strong style={{ color: 'var(--text-main)' }}>{filteredResults.length} / {results.length} RBCs</strong>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            Visible: <strong style={{ color: 'var(--text-main)' }}>{filteredResults.length} / {results.length}</strong>
           </span>
 
           <button
             onClick={onOpenReport}
             title="Generate Clinical Report (Scopio Labs / CellaVision format)"
+            className="touch-friendly-button"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.4rem',
-              padding: '0.42rem 0.85rem',
+              padding: '0.42rem 0.8rem',
               background: 'var(--scopio-magenta)',
               border: 'none',
               borderRadius: '8px',
               color: '#ffffff',
-              fontSize: '0.78rem',
+              fontSize: '0.76rem',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
@@ -475,13 +561,13 @@ export default function SmearCanvas({
         </div>
       </div>
 
-      {/* 2. Interactive Digital Microscope Viewport */}
+      {/* 2. Interactive Digital Microscope Viewport (Responsive Height & Touch Panning) */}
       <div
         ref={containerRef}
         style={{
           width: '100%',
           maxWidth: '800px',
-          height: '540px',
+          height: `${containerSize.height}px`,
           margin: '0 auto',
           position: 'relative',
           borderRadius: '12px',
@@ -489,6 +575,7 @@ export default function SmearCanvas({
           border: '1px solid #cbd5e1',
           background: '#090e1a',
           boxShadow: 'var(--shadow-lg)',
+          touchAction: 'none',
           cursor: activeTool === 'pan' ? (isPanning ? 'grabbing' : 'grab') : (activeHoveredCell ? 'pointer' : 'crosshair')
         }}
         onMouseMove={handleMouseMove}
@@ -496,15 +583,18 @@ export default function SmearCanvas({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        {/* Transform Container for Smooth Zoom & Pan */}
+        {/* Transform Container for Smooth Zoom & Pan with Responsive Base Scaling */}
         <div style={{
           width: '800px',
           height: '600px',
           position: 'absolute',
           left: '50%',
           top: '50%',
-          transform: `translate(-50%, -50%) translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel})`,
+          transform: `translate(-50%, -50%) translate(${panOffset.x}px, ${panOffset.y}px) scale(${effectiveScale})`,
           transformOrigin: 'center center',
           transition: isPanning ? 'none' : 'transform 0.15s ease-out'
         }}>
@@ -540,43 +630,43 @@ export default function SmearCanvas({
         {/* 3. Calibrated Micron Scale Bar (Scopio Style Crisp Frosted Pill) */}
         <div style={{
           position: 'absolute',
-          bottom: '12px',
-          left: '12px',
+          bottom: '10px',
+          left: '10px',
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(8px)',
           border: '1px solid #cbd5e1',
           borderRadius: '8px',
-          padding: '0.35rem 0.75rem',
+          padding: '0.3rem 0.65rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '3px',
+          gap: '2px',
           pointerEvents: 'none',
           zIndex: 20,
           boxShadow: '0 4px 12px rgba(0, 20, 55, 0.15)'
         }}>
           <div style={{
-            width: `${Math.round(36 * zoomLevel)}px`,
+            width: `${Math.max(22, Math.round(36 * effectiveScale))}px`,
             height: '3px',
             background: 'var(--scopio-magenta)',
             borderRadius: '2px'
           }} />
-          <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#001437', fontFamily: 'var(--font-mono)' }}>
+          <span style={{ fontSize: '0.66rem', fontWeight: 700, color: '#001437', fontFamily: 'var(--font-mono)' }}>
             10 µm (1000x)
           </span>
         </div>
 
-        {/* 4. Interactive Minimap HUD (Scopio Style) */}
+        {/* 4. Interactive Minimap HUD (Scopio Style - Compact on Mobile) */}
         {zoomLevel > 1 && (
           <div
             onClick={handleMinimapClick}
             title="Click minimap to reposition viewport"
             style={{
               position: 'absolute',
-              bottom: '12px',
-              right: '12px',
-              width: '120px',
-              height: '90px',
+              bottom: '10px',
+              right: '10px',
+              width: containerSize.width < 500 ? '80px' : '110px',
+              height: containerSize.width < 500 ? '60px' : '82px',
               borderRadius: '8px',
               border: '2px solid var(--scopio-magenta)',
               overflow: 'hidden',

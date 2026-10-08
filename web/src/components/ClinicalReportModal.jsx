@@ -66,7 +66,7 @@ export default function ClinicalReportModal({ results = [], imageSrc, onClose })
   };
 
   return (
-    <div style={{
+    <div className="modal-overlay-responsive" style={{
       position: 'fixed',
       inset: 0,
       background: 'rgba(0, 20, 55, 0.65)',
@@ -75,15 +75,15 @@ export default function ClinicalReportModal({ results = [], imageSrc, onClose })
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 120,
-      padding: '1.5rem',
+      padding: '1.25rem',
       overflowY: 'auto'
     }} onClick={onClose}>
       <div
-        className="glass-panel report-sheet"
+        className="glass-panel report-sheet modal-content-responsive"
         style={{
           maxWidth: '860px',
           width: '100%',
-          maxHeight: '90vh',
+          maxHeight: '94vh',
           display: 'flex',
           flexDirection: 'column',
           background: '#ffffff',
@@ -99,62 +99,67 @@ export default function ClinicalReportModal({ results = [], imageSrc, onClose })
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '1rem 1.75rem',
+          padding: '0.85rem 1.25rem',
           background: '#ffffff',
           borderBottom: '1px solid var(--border-subtle)',
-          flexShrink: 0
+          flexShrink: 0,
+          flexWrap: 'wrap',
+          gap: '0.65rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <FileText size={18} color="var(--scopio-magenta)" />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              Clinical Morphology Differential Examination
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+              Clinical Morphology Differential Report
             </h3>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button
               onClick={handleCopySummary}
+              className="touch-friendly-button"
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.45rem 0.85rem',
+                gap: '0.35rem',
+                padding: '0.4rem 0.75rem',
                 background: '#ffffff',
                 border: '1px solid #cbd5e1',
                 borderRadius: '8px',
                 color: copied ? 'var(--accent-emerald)' : 'var(--text-main)',
-                fontSize: '0.78rem',
+                fontSize: '0.76rem',
                 fontWeight: 600,
                 cursor: 'pointer'
               }}
             >
               {copied ? <Check size={14} /> : <Copy size={14} />}
-              <span>{copied ? 'Copied' : 'Copy Text'}</span>
+              <span>{copied ? 'Copied' : 'Copy'}</span>
             </button>
 
             <button
               onClick={handlePrint}
+              className="touch-friendly-button"
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.45rem 0.95rem',
+                gap: '0.35rem',
+                padding: '0.4rem 0.85rem',
                 background: 'var(--scopio-magenta)',
                 border: 'none',
                 borderRadius: '8px',
                 color: '#ffffff',
                 fontWeight: 700,
-                fontSize: '0.78rem',
+                fontSize: '0.76rem',
                 cursor: 'pointer',
                 boxShadow: '0 2px 8px rgba(239, 26, 169, 0.3)'
               }}
             >
               <Printer size={14} />
-              <span>Print / PDF Export</span>
+              <span>Print / PDF</span>
             </button>
 
             <button
               onClick={onClose}
+              className="touch-friendly-button"
               style={{
                 background: '#f8fafc',
                 border: '1px solid #cbd5e1',
@@ -173,8 +178,8 @@ export default function ClinicalReportModal({ results = [], imageSrc, onClose })
         </div>
 
         {/* Scrollable Printable Sheet Body */}
-        <div style={{
-          padding: '2rem 2.25rem',
+        <div className="report-sheet-body" style={{
+          padding: '1.75rem 2rem',
           overflowY: 'auto',
           background: '#ffffff',
           flex: 1,
@@ -188,33 +193,31 @@ export default function ClinicalReportModal({ results = [], imageSrc, onClose })
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             borderBottom: '2px solid #001437',
-            paddingBottom: '1.25rem'
+            paddingBottom: '1.15rem',
+            flexWrap: 'wrap',
+            gap: '0.85rem'
           }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                <Microscope size={22} color="var(--scopio-magenta)" />
-                <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+                <Microscope size={20} color="var(--scopio-magenta)" />
+                <h1 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em', margin: 0 }}>
                   LABORATORY RBC MORPHOLOGY EXAMINATION
                 </h1>
               </div>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
                 Automated Monolayer High-Resolution Digital Differential Report
               </p>
             </div>
 
-            <div style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <div style={{ textAlign: 'right', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
               <div>Specimen ID: <strong style={{ color: 'var(--text-main)', fontFamily: 'var(--font-mono)' }}>PBS-2026-0941</strong></div>
-              <div>Optical Magnification: <strong>1000x Oil Immersion</strong></div>
-              <div>Report Date: <strong>{new Date().toLocaleDateString()}</strong></div>
+              <div>Magnification: <strong>1000x Oil Immersion</strong></div>
+              <div>Date: <strong>{new Date().toLocaleDateString()}</strong></div>
             </div>
           </div>
 
           {/* Quick Metrics Summary Cards */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '0.85rem'
-          }}>
+          <div className="report-kpi-grid">
             <div style={{ background: '#f8fafc', padding: '0.9rem 1.1rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 600 }}>Total Evaluated</div>
               <div style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-main)', fontFamily: 'var(--font-mono)' }}>{totalCells} RBCs</div>
@@ -253,13 +256,8 @@ export default function ClinicalReportModal({ results = [], imageSrc, onClose })
               </span>
             </div>
 
-            <div style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              background: '#ffffff'
-            }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+            <div className="table-responsive-wrapper">
+              <table style={{ minWidth: '580px', width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
                     <th style={{ padding: '0.65rem 0.95rem', color: '#001437', fontWeight: 700 }}>Morphological Class</th>
@@ -327,17 +325,7 @@ export default function ClinicalReportModal({ results = [], imageSrc, onClose })
           </div>
 
           {/* Regulatory Disclaimer & Sign-off Box */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1.2fr 1fr',
-            gap: '1.5rem',
-            padding: '1.15rem',
-            background: '#f8fafc',
-            borderRadius: '10px',
-            border: '1px solid #e2e8f0',
-            fontSize: '0.78rem',
-            color: 'var(--text-dim)'
-          }}>
+          <div className="report-signoff-grid">
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent-amber)', marginBottom: '0.35rem', fontWeight: 700 }}>
                 <AlertTriangle size={15} />

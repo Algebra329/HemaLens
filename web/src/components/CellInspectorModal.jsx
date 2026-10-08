@@ -162,7 +162,7 @@ export default function CellInspectorModal({
   }, [currentIndex, hasPrev, hasNext]);
 
   return (
-    <div style={{
+    <div className="modal-overlay-responsive" style={{
       position: 'fixed',
       inset: 0,
       background: 'rgba(0, 20, 55, 0.65)',
@@ -171,15 +171,17 @@ export default function CellInspectorModal({
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 110,
-      padding: '1.5rem',
+      padding: '1.25rem',
       overflowY: 'auto'
     }} onClick={onClose}>
       <div
-        className="glass-panel"
+        className="glass-panel modal-content-responsive"
         style={{
           maxWidth: '740px',
           width: '100%',
-          padding: '1.75rem',
+          maxHeight: '92vh',
+          overflowY: 'auto',
+          padding: '1.5rem',
           background: '#ffffff',
           border: '1px solid var(--border-subtle)',
           boxShadow: '0 25px 60px -10px rgba(0, 20, 55, 0.3)',
@@ -193,29 +195,32 @@ export default function CellInspectorModal({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: '1.25rem',
-          paddingBottom: '0.85rem',
-          borderBottom: '1px solid var(--border-subtle)'
+          marginBottom: '1.15rem',
+          paddingBottom: '0.75rem',
+          borderBottom: '1px solid var(--border-subtle)',
+          flexWrap: 'wrap',
+          gap: '0.65rem'
         }}>
           {/* Left: Class Badge & ID */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
             <div style={{
               width: '12px',
               height: '12px',
               borderRadius: '50%',
               backgroundColor: classInfo.color,
-              boxShadow: `0 0 10px ${classInfo.color}80`
+              boxShadow: `0 0 10px ${classInfo.color}80`,
+              flexShrink: 0
             }} />
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em', margin: 0 }}>
                   {classInfo.name.replace('_', ' ')}
                 </h3>
-                <span className={`clinical-badge ${classInfo.isAbnormal ? 'badge-rose' : 'badge-emerald'}`} style={{ fontSize: '0.7rem' }}>
+                <span className={`clinical-badge ${classInfo.isAbnormal ? 'badge-rose' : 'badge-emerald'}`} style={{ fontSize: '0.68rem' }}>
                   {classInfo.isAbnormal ? 'Atypical Variant' : 'Normal Reference'}
                 </span>
               </div>
-              <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
                 Cell #{cell.id} • Evaluated via Scopio / EfficientNet Pipeline
               </span>
             </div>
@@ -285,12 +290,7 @@ export default function CellInspectorModal({
         </div>
 
         {/* Side-by-Side: Patient Specimen Crop VS Textbook Reference (Scopio Style) */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '1.25rem',
-          marginBottom: '1.25rem'
-        }}>
+        <div className="inspector-grid">
           {/* 1. Patient Specimen Cell */}
           <div style={{
             background: '#ffffff',
@@ -443,16 +443,7 @@ export default function CellInspectorModal({
         </div>
 
         {/* Morphological Parameters Card (Clean White Tile) */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '0.75rem',
-          background: '#f8fafc',
-          borderRadius: '10px',
-          padding: '0.9rem',
-          border: '1px solid #e2e8f0',
-          marginBottom: '1rem'
-        }}>
+        <div className="inspector-params-grid">
           <div>
             <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 600 }}>Estimated Diam.</div>
             <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)' }}>{refData.diameter}</div>

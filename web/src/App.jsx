@@ -175,28 +175,20 @@ export default function App() {
       <DisclaimerBanner />
 
       {/* 3. Main Workspace */}
-      <main style={{
-        maxWidth: '1440px',
-        width: '100%',
-        margin: '1.75rem auto',
-        padding: '0 1.5rem',
-        flex: 1,
-        display: 'flex',
-        gap: '1.75rem',
-        alignItems: 'flex-start'
-      }}>
+      <main className="app-main-layout">
         {/* Left / Center Area: Smear Stage */}
         <section style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
           gap: '1.25rem',
-          minWidth: 0
+          minWidth: 0,
+          width: '100%'
         }}>
           {/* Milestone Indicator Card (Scopio Style) */}
-          <div className="glass-panel" style={{ padding: '1.25rem 1.6rem' }}>
+          <div className="glass-panel" style={{ padding: '1.15rem 1.4rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-              <div>
+              <div style={{ flex: '1 1 260px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
                   <span className="clinical-badge badge-emerald">
                     <Check size={12} /> Step 5: Dual-Stage Neural Pipeline
@@ -212,12 +204,12 @@ export default function App() {
                     </span>
                   )}
                 </div>
-                <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
                   Peripheral Smear Examination Stage
                 </h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.84rem' }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginTop: '0.15rem' }}>
                   {scanDone
-                    ? 'Inference completed. Hover over cells or click any bounding box to open the full-field diagnostic inspector.'
+                    ? 'Inference completed. Tap or hover over cells to open the full-field diagnostic inspector.'
                     : 'Select a clinical sample or upload a blood smear micrograph to begin analysis.'}
                 </p>
               </div>
@@ -225,6 +217,7 @@ export default function App() {
               {selectedImage && (
                 <button
                   onClick={handleReset}
+                  className="touch-friendly-button"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -257,12 +250,14 @@ export default function App() {
 
           {/* Core Interactive Area */}
           <div className="glass-panel" style={{
-            padding: '1.5rem',
-            minHeight: '480px',
+            padding: '1.25rem',
+            minHeight: '440px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            width: '100%',
+            overflow: 'hidden'
           }}>
             {!selectedImage && (
               <ImageUploader onSelectImage={handleSelectImage} />
@@ -338,7 +333,7 @@ export default function App() {
       )}
 
       {/* 6. Clinical Footer (Scopio Clean Style) */}
-      <footer style={{
+      <footer className="footer-container" style={{
         borderTop: '1px solid var(--border-subtle)',
         padding: '1.25rem 2rem',
         background: '#ffffff',

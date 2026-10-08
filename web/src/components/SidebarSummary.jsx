@@ -42,9 +42,7 @@ export default function SidebarSummary({
   }
 
   return (
-    <aside style={{
-      width: '380px',
-      flexShrink: 0,
+    <aside className="app-sidebar-aside" style={{
       background: '#ffffff',
       border: '1px solid var(--border-subtle)',
       borderRadius: '12px',
@@ -137,9 +135,10 @@ export default function SidebarSummary({
       )}
 
       {/* Class List */}
-      <div style={{
+      <div className="sidebar-classlist-scroll" style={{
         flex: 1,
         overflowY: 'auto',
+        maxHeight: '520px',
         padding: '0.75rem 0.9rem',
         display: 'flex',
         flexDirection: 'column',

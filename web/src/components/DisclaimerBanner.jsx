@@ -7,7 +7,7 @@ export default function DisclaimerBanner() {
   if (dismissed) return null;
 
   return (
-    <aside style={{
+    <aside className="disclaimer-aside" style={{
       background: '#fffbeb',
       borderBottom: '1px solid #fde68a',
       padding: '0.65rem 2rem',
@@ -16,7 +16,7 @@ export default function DisclaimerBanner() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: '1rem'
+      gap: '0.75rem'
     }}>
       <div style={{
         maxWidth: '1440px',

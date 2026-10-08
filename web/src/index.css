@@ -208,3 +208,205 @@ code, pre {
     border: 1px solid #cbd5e1 !important;
   }
 }
+
+/* ========================================================
+   Mobile & Responsive Adaptations (Smartphones & Tablets)
+   ======================================================== */
+
+.app-main-layout {
+  max-width: 1440px;
+  width: 100%;
+  margin: 1.75rem auto;
+  padding: 0 1.5rem;
+  flex: 1;
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-start;
+}
+
+.app-sidebar-aside {
+  width: 380px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.inspector-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.inspector-params-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 0.9rem;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.report-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+}
+
+.report-signoff-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+  padding: 1.15rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.table-responsive-wrapper table {
+  min-width: 580px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.horizontal-scroll-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  padding-bottom: 4px;
+}
+
+.touch-friendly-button {
+  min-height: 36px;
+  touch-action: manipulation;
+}
+
+/* Tablet Breakpoint (<= 1024px) */
+@media screen and (max-width: 1024px) {
+  .app-main-layout {
+    flex-direction: column;
+    padding: 0 1.25rem;
+    margin: 1.25rem auto;
+    gap: 1.5rem;
+  }
+
+  .app-sidebar-aside {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .app-sidebar-aside .sidebar-classlist-scroll {
+    max-height: 440px;
+  }
+}
+
+/* Mobile Devices Breakpoint (<= 768px) */
+@media screen and (max-width: 768px) {
+  .app-main-layout {
+    padding: 0 0.85rem;
+    margin: 0.85rem auto;
+    gap: 1rem;
+  }
+
+  .header-wrapper {
+    padding: 0.75rem 1rem !important;
+  }
+
+  .header-badges-row {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.4rem !important;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 2px;
+  }
+
+  .disclaimer-aside {
+    padding: 0.6rem 1rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .report-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .footer-container {
+    padding: 1rem !important;
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* Compact Mobile Breakpoint (<= 640px) */
+@media screen and (max-width: 640px) {
+  .app-main-layout {
+    padding: 0 0.6rem;
+    margin: 0.6rem auto;
+    gap: 0.85rem;
+  }
+
+  .inspector-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .inspector-params-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .report-signoff-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .report-signoff-grid > div:last-child {
+    border-left: none !important;
+    border-top: 1px solid #cbd5e1 !important;
+    padding-left: 0 !important;
+    padding-top: 1rem !important;
+  }
+
+  .modal-overlay-responsive {
+    padding: 0.5rem !important;
+  }
+
+  .modal-content-responsive {
+    padding: 1rem !important;
+    border-radius: 12px !important;
+  }
+
+  .report-sheet-body {
+    padding: 1rem 0.85rem !important;
+    gap: 1.15rem !important;
+  }
+
+  .clinical-badge {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.5rem;
+  }
+}

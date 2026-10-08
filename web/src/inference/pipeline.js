@@ -3,10 +3,9 @@ import { RBC_CLASSES } from './labels';
 
 // Configure ONNX Runtime Web WASM paths and thread limits
 if (typeof window !== 'undefined' && ort?.env?.wasm) {
-  // Point to CDN for the .wasm binary — the bundled .mjs glue is already embedded
-  // in ort.wasm.bundle.min.mjs so only the .wasm binary needs a path.
-  const ORT_VERSION = '1.30.0';
-  ort.env.wasm.wasmPaths = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/`;
+  // Self-host the WASM binaries from public/wasm/ so the service worker
+  // can cache them for full offline support (no external CDN dependency).
+  ort.env.wasm.wasmPaths = '/wasm/';
   ort.env.wasm.numThreads = 1;
 }
 

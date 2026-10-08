@@ -3,7 +3,7 @@ import { Microscope, ShieldCheck, WifiOff, Cpu, Sparkles } from 'lucide-react';
 
 export default function Header() {
   return (
-    <header style={{
+    <header className="header-wrapper" style={{
       background: '#ffffff',
       borderBottom: '1px solid var(--border-subtle)',
       padding: '0.85rem 2rem',
@@ -19,52 +19,53 @@ export default function Header() {
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '1rem'
+        gap: '0.85rem'
       }}>
         {/* Brand & Product Identifier (Scopio Labs Inspired) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
           <div style={{
-            width: '42px',
-            height: '42px',
+            width: '40px',
+            height: '40px',
             borderRadius: '10px',
             background: 'linear-gradient(135deg, #001437 0%, #372273 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: '#ffffff',
-            boxShadow: '0 4px 12px rgba(0, 20, 55, 0.15)'
+            boxShadow: '0 4px 12px rgba(0, 20, 55, 0.15)',
+            flexShrink: 0
           }}>
-            <Microscope size={22} color="#ffffff" />
+            <Microscope size={20} color="#ffffff" />
           </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <h1 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
-                HemaScan <span style={{ color: 'var(--scopio-magenta)', fontWeight: 800 }}>AI</span>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+              <h1 style={{ fontSize: '1.2rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-main)', margin: 0 }}>
+                HemaLens
               </h1>
-              <span className="clinical-badge badge-magenta" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>
+              <span className="clinical-badge badge-magenta" style={{ fontSize: '0.66rem', padding: '0.12rem 0.45rem' }}>
                 Full-Field Morphology
               </span>
             </div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Point-of-Care Digital Cell Morphology System • UnivaBio Edition
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              Point-of-Care Digital Cell Morphology • UnivaBio Edition
             </p>
           </div>
         </div>
 
         {/* Operational Status Indicators (Scopio Clean Pill Styling) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+        <div className="header-badges-row" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
           <div className="clinical-badge badge-emerald" title="Application operates entirely without an active internet connection">
-            <WifiOff size={13} />
-            <span>100% Offline Capable</span>
+            <WifiOff size={12} />
+            <span>100% Offline</span>
           </div>
 
           <div className="clinical-badge badge-cyan" title="Models execute on client device hardware via WebAssembly">
-            <Cpu size={13} />
-            <span>Client WASM Engine</span>
+            <Cpu size={12} />
+            <span>WASM Engine</span>
           </div>
 
           <div className="clinical-badge badge-navy" title="No patient images are transmitted or saved outside the browser">
-            <ShieldCheck size={13} color="var(--scopio-magenta)" />
+            <ShieldCheck size={12} color="var(--scopio-magenta)" />
             <span>Zero Data Egress</span>
           </div>
         </div>
