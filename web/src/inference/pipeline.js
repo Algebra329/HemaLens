@@ -50,6 +50,20 @@ export async function getInferenceSessions() {
 
   if (!sessionInitPromise) {
     sessionInitPromise = (async () => {
+      // If WASM runtime was cached offline, inject the binary directly into ort.env
+      if (typeof window !== 'undefined' && 'caches' in window && !ort?.env?.wasm?.wasmBinary) {
+        try {
+          const wasmCache = await caches.open('ort-wasm-runtime');
+          const wasmMatch = await wasmCache.match('/wasm/ort-wasm-simd-threaded.wasm')
+            || await wasmCache.match(`https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/ort-wasm-simd-threaded.wasm`);
+          if (wasmMatch) {
+            ort.env.wasm.wasmBinary = await wasmMatch.arrayBuffer();
+          }
+        } catch (e) {
+          console.warn('WASM cache inspection skipped:', e);
+        }
+      }
+
       const [seg, cls] = await Promise.all([
         createSessionWithFallback('/models/segmentation.onnx'),
         createSessionWithFallback('/models/classification.onnx')

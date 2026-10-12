@@ -7,10 +7,11 @@
 export const OFFLINE_ASSETS = [
   {
     id: 'wasm-runtime',
-    url: 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort-wasm-simd.wasm',
+    url: '/wasm/ort-wasm-simd-threaded.wasm',
+    fallbackUrl: 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort-wasm-simd-threaded.wasm',
     name: 'WASM Inference Engine',
     desc: 'WebAssembly point-of-care execution runtime',
-    sizeBytes: 10400000, // ~10.4 MB
+    sizeBytes: 14239897, // ~14.2 MB
     cacheName: 'ort-wasm-runtime'
   },
   {
@@ -53,7 +54,10 @@ export async function getCachedStatus() {
   for (const asset of OFFLINE_ASSETS) {
     try {
       const cache = await caches.open(asset.cacheName);
-      const match = await cache.match(asset.url);
+      let match = await cache.match(asset.url);
+      if (!match && asset.fallbackUrl) {
+        match = await cache.match(asset.fallbackUrl);
+      }
       const isCached = !!match;
       if (isCached) {
         totalCachedBytes += asset.sizeBytes;
@@ -88,7 +92,10 @@ export async function downloadAllOfflineAssets(onProgress) {
 
   for (const asset of OFFLINE_ASSETS) {
     const cache = await caches.open(asset.cacheName);
-    const existing = await cache.match(asset.url);
+    let existing = await cache.match(asset.url);
+    if (!existing && asset.fallbackUrl) {
+      existing = await cache.match(asset.fallbackUrl);
+    }
 
     if (existing) {
       totalDownloadedSoFar += asset.sizeBytes;
@@ -104,9 +111,20 @@ export async function downloadAllOfflineAssets(onProgress) {
       continue;
     }
 
-    const response = await fetch(asset.url);
-    if (!response.ok) {
-      throw new Error(`Failed to download ${asset.name} (${response.status} ${response.statusText})`);
+    let response = null;
+    try {
+      response = await fetch(asset.url);
+      if (!response.ok && asset.fallbackUrl) {
+        response = await fetch(asset.fallbackUrl);
+      }
+    } catch {
+      if (asset.fallbackUrl) {
+        response = await fetch(asset.fallbackUrl).catch(() => null);
+      }
+    }
+
+    if (!response || !response.ok) {
+      throw new Error(`Failed to download ${asset.name} (${response?.status || 404} ${response?.statusText || 'Not Found'})`);
     }
 
     const contentLength = Number(response.headers.get('content-length')) || asset.sizeBytes;
@@ -147,9 +165,10 @@ export async function downloadAllOfflineAssets(onProgress) {
         'Content-Length': String(blob.size),
         'Cache-Control': 'public, max-age=31536000, immutable'
       }
-    });
-
     await cache.put(asset.url, cachedResponse);
+    if (asset.fallbackUrl) {
+      await cache.put(asset.fallbackUrl, cachedResponse.clone());
+    }
   }
 
   return true;
