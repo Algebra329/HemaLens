@@ -157,7 +157,7 @@ export async function downloadAllOfflineAssets(onProgress) {
       type: response.headers.get('content-type') || 'application/octet-stream'
     });
 
-    const cachedResponse = new Response(blob, {
+    const makeResponse = () => new Response(blob, {
       status: 200,
       statusText: 'OK',
       headers: {
@@ -167,9 +167,9 @@ export async function downloadAllOfflineAssets(onProgress) {
       }
     });
 
-    await cache.put(asset.url, cachedResponse);
+    await cache.put(asset.url, makeResponse());
     if (asset.fallbackUrl) {
-      await cache.put(asset.fallbackUrl, cachedResponse.clone());
+      await cache.put(asset.fallbackUrl, makeResponse());
     }
   }
 
