@@ -120,13 +120,14 @@ export default function App() {
 
   const [inferenceError, setInferenceError] = useState(null);
 
-  const handleScanComplete = async () => {
+  const handleScanComplete = React.useCallback(async () => {
     setInferenceError(null);
-    // If real ONNX models are available, run through onnxruntime-web
-    if (isRealOnnxActive && hiddenImgRef.current) {
+    // If hiddenImgRef is present, attempt live client-side ONNX inference
+    if (hiddenImgRef.current) {
       try {
         const onnxDetections = await runInferencePipeline(hiddenImgRef.current);
         if (onnxDetections && onnxDetections.length > 0) {
+          setIsRealOnnxActive(true);
           setResults(onnxDetections);
           setIsScanning(false);
           setScanDone(true);
@@ -146,7 +147,7 @@ export default function App() {
     }
     setIsScanning(false);
     setScanDone(true);
-  };
+  }, [selectedImage]);
 
   const handleReset = () => {
     setSelectedImage(null);
@@ -169,7 +170,7 @@ export default function App() {
           src={selectedImage.src}
           alt="raw inference source"
           style={{ position: 'fixed', top: '-9999px', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
-          crossOrigin="anonymous"
+          {...(selectedImage.src?.startsWith('http') ? { crossOrigin: 'anonymous' } : {})}
         />
       )}
 

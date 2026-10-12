@@ -47,6 +47,16 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          {
+            // Cache preset sample smears for offline demonstration
+            urlPattern: /\/samples\/.*\.svg$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'sample-images',
+              expiration: { maxEntries: 10, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
         ],
 
         // Bump the default 2MB pre-cache size limit for large assets

@@ -55,6 +55,9 @@ export async function getCachedStatus() {
     try {
       const cache = await caches.open(asset.cacheName);
       let match = await cache.match(asset.url);
+      if (!match && typeof window !== 'undefined') {
+        match = await cache.match(new URL(asset.url, window.location.href).href);
+      }
       if (!match && asset.fallbackUrl) {
         match = await cache.match(asset.fallbackUrl);
       }
@@ -93,6 +96,9 @@ export async function downloadAllOfflineAssets(onProgress) {
   for (const asset of OFFLINE_ASSETS) {
     const cache = await caches.open(asset.cacheName);
     let existing = await cache.match(asset.url);
+    if (!existing && typeof window !== 'undefined') {
+      existing = await cache.match(new URL(asset.url, window.location.href).href);
+    }
     if (!existing && asset.fallbackUrl) {
       existing = await cache.match(asset.fallbackUrl);
     }
@@ -168,9 +174,45 @@ export async function downloadAllOfflineAssets(onProgress) {
     });
 
     await cache.put(asset.url, makeResponse());
+    if (typeof window !== 'undefined') {
+      try {
+        await cache.put(new URL(asset.url, window.location.href).href, makeResponse());
+      } catch {
+        // Safe to ignore if unable to put absolute URL
+      }
+    }
     if (asset.fallbackUrl) {
       await cache.put(asset.fallbackUrl, makeResponse());
     }
+  }
+
+  // Pre-cache preset sample slides so presets function 100% offline
+  try {
+    const sampleCache = await caches.open('sample-images');
+    const sampleUrls = [
+      '/samples/smear_normal.svg',
+      '/samples/smear_thalassemia.svg',
+      '/samples/smear_spherocytosis.svg'
+    ];
+    for (const sUrl of sampleUrls) {
+      const matched = await sampleCache.match(sUrl);
+      if (!matched) {
+        const sRes = await fetch(sUrl).catch(() => null);
+        if (sRes && sRes.ok) {
+          const sBlob = await sRes.blob();
+          const sResponse = () => new Response(sBlob, {
+            status: 200,
+            headers: { 'Content-Type': 'image/svg+xml' }
+          });
+          await sampleCache.put(sUrl, sResponse());
+          if (typeof window !== 'undefined') {
+            await sampleCache.put(new URL(sUrl, window.location.href).href, sResponse()).catch(() => {});
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('Sample slide offline caching non-fatal error:', e);
   }
 
   return true;

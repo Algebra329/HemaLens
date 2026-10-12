@@ -2,11 +2,13 @@ import * as ort from 'onnxruntime-web/wasm';
 import { RBC_CLASSES } from './labels';
 
 // Configure ONNX Runtime Web WASM paths and thread limits
-const ORT_VERSION = '1.30.0';
+// We point wasmPaths directly to the local wasm binary without a CDN prefix string.
+// Passing { wasm: '...' } allows onnxruntime-web to use its built-in embedded Emscripten
+// glue and avoids dynamic imports from external CDNs, making it 100% offline resilient.
 if (typeof window !== 'undefined' && ort?.env?.wasm) {
-  // Point to CDN for the single-threaded SIMD .wasm binary.
-  // The bundled .mjs glue is already embedded in ort.wasm.bundle.min.mjs.
-  ort.env.wasm.wasmPaths = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/`;
+  ort.env.wasm.wasmPaths = {
+    wasm: '/wasm/ort-wasm-simd-threaded.wasm'
+  };
   ort.env.wasm.numThreads = 1;
 }
 
@@ -23,10 +25,13 @@ async function createSessionWithFallback(modelPath) {
   if (typeof window !== 'undefined' && 'caches' in window) {
     try {
       const cache = await caches.open('onnx-models');
-      const match = await cache.match(modelPath);
+      let match = await cache.match(modelPath);
+      if (!match) {
+        match = await cache.match(new URL(modelPath, window.location.href).href);
+      }
       if (match) {
         const buffer = await match.arrayBuffer();
-        return await ort.InferenceSession.create(buffer, {
+        return await ort.InferenceSession.create(new Uint8Array(buffer), {
           executionProviders: ['wasm']
         });
       }
@@ -50,27 +55,34 @@ export async function getInferenceSessions() {
 
   if (!sessionInitPromise) {
     sessionInitPromise = (async () => {
-      // If WASM runtime was cached offline, inject the binary directly into ort.env
-      if (typeof window !== 'undefined' && 'caches' in window && !ort?.env?.wasm?.wasmBinary) {
-        try {
-          const wasmCache = await caches.open('ort-wasm-runtime');
-          const wasmMatch = await wasmCache.match('/wasm/ort-wasm-simd-threaded.wasm')
-            || await wasmCache.match(`https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/ort-wasm-simd-threaded.wasm`);
-          if (wasmMatch) {
-            ort.env.wasm.wasmBinary = await wasmMatch.arrayBuffer();
+      try {
+        // 1. If WASM runtime was cached offline, inject the binary directly into ort.env.wasm.wasmBinary
+        if (typeof window !== 'undefined' && 'caches' in window && !ort?.env?.wasm?.wasmBinary) {
+          try {
+            const wasmCache = await caches.open('ort-wasm-runtime');
+            let wasmMatch = await wasmCache.match('/wasm/ort-wasm-simd-threaded.wasm');
+            if (!wasmMatch) {
+              wasmMatch = await wasmCache.match(new URL('/wasm/ort-wasm-simd-threaded.wasm', window.location.href).href);
+            }
+            if (wasmMatch) {
+              const wasmBuf = await wasmMatch.arrayBuffer();
+              ort.env.wasm.wasmBinary = wasmBuf;
+            }
+          } catch (e) {
+            console.warn('WASM cache inspection skipped:', e);
           }
-        } catch (e) {
-          console.warn('WASM cache inspection skipped:', e);
         }
-      }
 
-      const [seg, cls] = await Promise.all([
-        createSessionWithFallback('/models/segmentation.onnx'),
-        createSessionWithFallback('/models/classification.onnx')
-      ]);
-      segSession = seg;
-      clsSession = cls;
-      return { segSession, clsSession };
+        // 2. Initialize sessions sequentially to prevent concurrent WebAssembly initialization race
+        const seg = await createSessionWithFallback('/models/segmentation.onnx');
+        const cls = await createSessionWithFallback('/models/classification.onnx');
+        segSession = seg;
+        clsSession = cls;
+        return { segSession, clsSession };
+      } catch (err) {
+        sessionInitPromise = null;
+        throw err;
+      }
     })();
   }
 
@@ -78,11 +90,28 @@ export async function getInferenceSessions() {
 }
 
 /**
- * Check whether the exported ONNX model files have been placed in
- * web/public/models/. Returns true only when both the segmentation
- * and classification models are reachable.
+ * Check whether the exported ONNX model files are available either in Cache Storage
+ * (offline) or reachable via network (online).
  */
 export async function checkModelsDeployed() {
+  // First check if models are available in Cache Storage (works 100% offline)
+  if (typeof window !== 'undefined' && 'caches' in window) {
+    try {
+      const cache = await caches.open('onnx-models');
+      const [segCached, clsCached] = await Promise.all([
+        cache.match('/models/segmentation.onnx')
+          .then(m => m || cache.match(new URL('/models/segmentation.onnx', window.location.href).href)),
+        cache.match('/models/classification.onnx')
+          .then(m => m || cache.match(new URL('/models/classification.onnx', window.location.href).href)),
+      ]);
+      if (segCached && clsCached) {
+        return true;
+      }
+    } catch {
+      // Fall through to network check
+    }
+  }
+
   try {
     const [segRes, clsRes] = await Promise.all([
       fetch('/models/segmentation.onnx', { method: 'HEAD' }),
@@ -299,13 +328,13 @@ export async function runInferencePipeline(imageElement) {
   }
 
   // Ensure image is fully loaded and decoded
-  if (!imageElement.complete || imageElement.naturalWidth === 0) {
+  if (!imageElement.complete) {
     await new Promise((resolve, reject) => {
       const onLoad = () => {
         cleanup();
         resolve();
       };
-      const onError = (e) => {
+      const onError = () => {
         cleanup();
         reject(new Error("Failed to load source image for inference"));
       };
@@ -316,6 +345,14 @@ export async function runInferencePipeline(imageElement) {
       imageElement.addEventListener('load', onLoad);
       imageElement.addEventListener('error', onError);
     });
+  }
+
+  if (typeof imageElement.decode === 'function') {
+    try {
+      await imageElement.decode();
+    } catch {
+      // Decode may throw if source is an SVG or already attached; proceed to canvas drawing
+    }
   }
 
   // 1. Ensure sessions are initialized

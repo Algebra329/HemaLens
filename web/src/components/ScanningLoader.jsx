@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Microscope, Cpu, Layers, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 
 export default function ScanningLoader({ imageSrc, expectedCount = 21, onScanComplete }) {
   const [progress, setProgress] = useState(0);
   const [stage, setStage] = useState(1); // 1 = Segmentation, 2 = Classification, 3 = Complete
   const [detectedCount, setDetectedCount] = useState(0);
+
+  const onScanCompleteRef = useRef(onScanComplete);
+  useEffect(() => {
+    onScanCompleteRef.current = onScanComplete;
+  }, [onScanComplete]);
 
   useEffect(() => {
     // Stage 1: Segmentation (0% - 50%) takes ~1000ms
@@ -26,7 +31,7 @@ export default function ScanningLoader({ imageSrc, expectedCount = 21, onScanCom
           clearInterval(interval);
           setStage(3);
           setTimeout(() => {
-            if (onScanComplete) onScanComplete();
+            if (onScanCompleteRef.current) onScanCompleteRef.current();
           }, 350);
           return 100;
         }
@@ -34,7 +39,7 @@ export default function ScanningLoader({ imageSrc, expectedCount = 21, onScanCom
     }, 110);
 
     return () => clearInterval(interval);
-  }, [expectedCount, onScanComplete]);
+  }, [expectedCount]);
 
   return (
     <div style={{
