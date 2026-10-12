@@ -165,6 +165,8 @@ export async function downloadAllOfflineAssets(onProgress) {
         'Content-Length': String(blob.size),
         'Cache-Control': 'public, max-age=31536000, immutable'
       }
+    });
+
     await cache.put(asset.url, cachedResponse);
     if (asset.fallbackUrl) {
       await cache.put(asset.fallbackUrl, cachedResponse.clone());
