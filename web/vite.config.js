@@ -7,6 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+      },
       workbox: {
         // Pre-cache the Vite build output (JS, CSS, HTML, SVGs)
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],

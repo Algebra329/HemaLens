@@ -8,6 +8,7 @@ import SmearCanvas from './components/SmearCanvas';
 import CellInspectorModal from './components/CellInspectorModal';
 import CellGalleryTray from './components/CellGalleryTray';
 import ClinicalReportModal from './components/ClinicalReportModal';
+import OfflineProgressBanner from './components/OfflineProgressBanner';
 import { checkModelsDeployed, runInferencePipeline } from './inference/pipeline';
 import { Microscope, RotateCcw, Check, Sparkles, Cpu, Layers } from 'lucide-react';
 
@@ -174,7 +175,14 @@ export default function App() {
       {/* 2. Regulatory Notice */}
       <DisclaimerBanner />
 
-      {/* 3. Main Workspace */}
+      {/* 3. Point-of-Care Offline Pack & Download Progress */}
+      <div style={{ padding: '0 2rem' }}>
+        <OfflineProgressBanner onReadyChange={(isReady) => {
+          if (isReady) setIsRealOnnxActive(true);
+        }} />
+      </div>
+
+      {/* 4. Main Workspace */}
       <main className="app-main-layout">
         {/* Left / Center Area: Smear Stage */}
         <section style={{

@@ -13,6 +13,7 @@ ml/models/*.pth
 web/node_modules/
 web/.next/
 web/dist/
+web/dev-dist/
 
 # OS
 .DS_Store

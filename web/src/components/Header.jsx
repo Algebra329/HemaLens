@@ -54,7 +54,15 @@ export default function Header() {
 
         {/* Operational Status Indicators (Scopio Clean Pill Styling) */}
         <div className="header-badges-row" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <div className="clinical-badge badge-emerald" title="Application operates entirely without an active internet connection">
+          <div
+            className="clinical-badge badge-emerald"
+            title="Click to view or verify Point-of-Care Offline Pack status"
+            onClick={() => {
+              const el = document.getElementById('offline-pack-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            style={{ cursor: 'pointer' }}
+          >
             <WifiOff size={12} />
             <span>100% Offline</span>
           </div>

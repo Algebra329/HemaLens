@@ -1,12 +1,15 @@
-import * as ort from 'onnxruntime-web/wasm';
+import * as ort from 'onnxruntime-web';
 import { RBC_CLASSES } from './labels';
 
-// Configure ONNX Runtime Web WASM paths and thread limits
+// Configure ONNX Runtime Web for point-of-care offline execution:
+// By configuring wasmPaths with an explicit object `{ wasm: '...' }` (rather than a path string),
+// onnxruntime-web uses its embedded internal factory module and fetches ONLY the .wasm binary.
+// This prevents Vite from intercepting dynamic imports of .mjs files from /public.
 if (typeof window !== 'undefined' && ort?.env?.wasm) {
-  // Self-host the WASM binaries from public/wasm/ so the service worker
-  // can cache them for full offline support (no external CDN dependency).
-  ort.env.wasm.wasmPaths = '/wasm/';
   ort.env.wasm.numThreads = 1;
+  ort.env.wasm.wasmPaths = {
+    wasm: '/wasm/ort-wasm-simd-threaded.wasm'
+  };
 }
 
 // Cached Inference Sessions (Singleton pattern)

@@ -42,10 +42,6 @@ export default function SmearCanvas({
     };
   }, []);
 
-  // Base fit scale to ensure the 800x600 micrograph fits completely on mobile screens
-  const baseScale = Math.min(containerSize.width / 800, containerSize.height / 600);
-  const effectiveScale = (baseScale > 0 ? baseScale : 1) * zoomLevel;
-
   // Microscope Viewport State (Zoom & Pan - Scopio Labs / Proscia Concentriq pattern)
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
@@ -53,6 +49,10 @@ export default function SmearCanvas({
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [activeTool, setActiveTool] = useState('inspect'); // 'inspect' | 'pan'
   const touchStartRef = useRef({ x: 0, y: 0, moved: false, time: 0 });
+
+  // Base fit scale to ensure the 800x600 micrograph fits completely on mobile screens
+  const baseScale = Math.min(containerSize.width / 800, containerSize.height / 600);
+  const effectiveScale = (baseScale > 0 ? baseScale : 1) * zoomLevel;
 
   // Canvas View Controls
   const [showBoundingBoxes, setShowBoundingBoxes] = useState(true);
