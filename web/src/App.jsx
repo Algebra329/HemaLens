@@ -10,7 +10,7 @@ import CellGalleryTray from './components/CellGalleryTray';
 import ClinicalReportModal from './components/ClinicalReportModal';
 import OfflineProgressBanner from './components/OfflineProgressBanner';
 import { checkModelsDeployed, runInferencePipeline } from './inference/pipeline';
-import { Microscope, RotateCcw, Check, Sparkles, Cpu, Layers } from 'lucide-react';
+import { Microscope, RotateCcw, Check, Sparkles, Cpu, Layers, AlertCircle } from 'lucide-react';
 
 // Exact calibrated cell coordinates and classifications for simulation mode
 const PRESET_RESULTS = {
@@ -118,7 +118,10 @@ export default function App() {
     setHoveredCellId(null);
   };
 
+  const [inferenceError, setInferenceError] = useState(null);
+
   const handleScanComplete = async () => {
+    setInferenceError(null);
     // If real ONNX models are available, run through onnxruntime-web
     if (isRealOnnxActive && hiddenImgRef.current) {
       try {
@@ -130,7 +133,8 @@ export default function App() {
           return;
         }
       } catch (err) {
-        console.warn('ONNX inference failed, using calibrated reference:', err);
+        console.error('ONNX inference failed:', err);
+        setInferenceError(err.message || 'ONNX inference error');
       }
     }
 
@@ -220,6 +224,23 @@ export default function App() {
                     ? 'Inference completed. Tap or hover over cells to open the full-field diagnostic inspector.'
                     : 'Select a clinical sample or upload a blood smear micrograph to begin analysis.'}
                 </p>
+                {inferenceError && (
+                  <div style={{
+                    marginTop: '0.65rem',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: '8px',
+                    background: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    color: '#991b1b',
+                    fontSize: '0.78rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}>
+                    <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                    <span><strong>ONNX Pipeline Warning:</strong> {inferenceError} (fell back to calibrated baseline control)</span>
+                  </div>
+                )}
               </div>
 
               {selectedImage && (

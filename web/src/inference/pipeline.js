@@ -1,15 +1,13 @@
-import * as ort from 'onnxruntime-web';
+import * as ort from 'onnxruntime-web/wasm';
 import { RBC_CLASSES } from './labels';
 
-// Configure ONNX Runtime Web for point-of-care offline execution:
-// By configuring wasmPaths with an explicit object `{ wasm: '...' }` (rather than a path string),
-// onnxruntime-web uses its embedded internal factory module and fetches ONLY the .wasm binary.
-// This prevents Vite from intercepting dynamic imports of .mjs files from /public.
+// Configure ONNX Runtime Web WASM paths and thread limits
+const ORT_VERSION = '1.30.0';
 if (typeof window !== 'undefined' && ort?.env?.wasm) {
+  // Point to CDN for the single-threaded SIMD .wasm binary.
+  // The bundled .mjs glue is already embedded in ort.wasm.bundle.min.mjs.
+  ort.env.wasm.wasmPaths = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/`;
   ort.env.wasm.numThreads = 1;
-  ort.env.wasm.wasmPaths = {
-    wasm: '/wasm/ort-wasm-simd-threaded.wasm'
-  };
 }
 
 // Cached Inference Sessions (Singleton pattern)
@@ -19,8 +17,24 @@ let sessionInitPromise = null;
 
 /**
  * Creates an ONNX InferenceSession with the 'wasm' execution provider.
+ * Reads directly from Cache Storage if available for offline execution.
  */
 async function createSessionWithFallback(modelPath) {
+  if (typeof window !== 'undefined' && 'caches' in window) {
+    try {
+      const cache = await caches.open('onnx-models');
+      const match = await cache.match(modelPath);
+      if (match) {
+        const buffer = await match.arrayBuffer();
+        return await ort.InferenceSession.create(buffer, {
+          executionProviders: ['wasm']
+        });
+      }
+    } catch (e) {
+      console.warn(`Cache read for ${modelPath} failed, falling back:`, e);
+    }
+  }
+
   return await ort.InferenceSession.create(modelPath, {
     executionProviders: ['wasm']
   });

@@ -28,8 +28,8 @@ export default defineConfig({
             },
           },
           {
-            // Cache self-hosted ONNX Runtime WASM binaries
-            urlPattern: /\/wasm\/.*\.(wasm|mjs)$/,
+            // Cache self-hosted or CDN ONNX Runtime WASM binaries
+            urlPattern: /(\/wasm\/.*|.*cdn\.jsdelivr\.net\/npm\/onnxruntime-web.*)\.(wasm|mjs)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'ort-wasm-runtime',

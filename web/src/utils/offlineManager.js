@@ -7,10 +7,10 @@
 export const OFFLINE_ASSETS = [
   {
     id: 'wasm-runtime',
-    url: '/wasm/ort-wasm-simd-threaded.wasm',
+    url: 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort-wasm-simd.wasm',
     name: 'WASM Inference Engine',
     desc: 'WebAssembly point-of-care execution runtime',
-    sizeBytes: 14239897, // ~14.2 MB
+    sizeBytes: 10400000, // ~10.4 MB
     cacheName: 'ort-wasm-runtime'
   },
   {
